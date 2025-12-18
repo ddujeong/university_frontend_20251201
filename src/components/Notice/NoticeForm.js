@@ -47,6 +47,10 @@ const NoticeForm = ({ noticeId, onBack }) => {
     formData.append("category", form.category);
 
     // 3. 파일 데이터 추가 (백엔드 NoticeFormDto의 필드 이름인 'file'로 매핑)
+    if (file) {
+      formData.append("file", file); // DTO의 필드명 'file'과 일치해야 함
+    }
+
     try {
       if (noticeId) {
         await updateNotice(noticeId, formData);

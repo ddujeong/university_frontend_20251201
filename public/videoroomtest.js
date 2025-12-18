@@ -19,7 +19,7 @@ var version = 1.2;
 var server = null;
 //  [수정] 서버 주소 설정 (jsflux janus server url)
 // HTTP 배포 시 주소 변경 해야합니다 @_@
-// server = "ws://janus.jsflux.co.kr/janus";
+//server = "ws://janus.jsflux.co.kr/janus";
 // server = "ws://janus.jsflux.co.kr:8088/janus";
 // 근데 HTTP 로 배포시 화상회의 작동이 안될수도 있어써
 // 가능하면 배포시에 HTTPS 로 해야한다고는 합니다...
