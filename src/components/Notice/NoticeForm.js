@@ -46,6 +46,9 @@ const NoticeForm = ({ noticeId, onBack }) => {
     formData.append("content", form.content);
     formData.append("category", form.category);
 
+    if (file) {
+      formData.append("file", file);
+    }
     // 3. 파일 데이터 추가 (백엔드 NoticeFormDto의 필드 이름인 'file'로 매핑)
     try {
       if (noticeId) {
