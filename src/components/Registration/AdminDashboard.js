@@ -4,9 +4,11 @@ import { dashboardApi } from "../../api/aiApi";
 
 const AdminDashboard = () => {
   const [risks, setRisks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [checkedIds, setCheckedIds] = useState(new Set());
   const { showModal } = useModal();
   useEffect(() => {
+    setIsLoading(true);
     dashboardApi
       .getAllRiskList()
       .then((res) => setRisks(res.data))
@@ -15,9 +17,16 @@ const AdminDashboard = () => {
           type: "alert",
           message: "학생목록을 불러오는데 실패했습니다.",
         })
-      );
+      )
+      .finally(() => setIsLoading(false));
   }, []);
-
+  const handleAllCheck = (e) => {
+    if (e.target.checked) {
+      setCheckedIds(new Set(risks.map((r) => r.id)));
+    } else {
+      setCheckedIds(new Set());
+    }
+  };
   const handleCheck = (id) => {
     const newChecked = new Set(checkedIds);
     if (newChecked.has(id)) newChecked.delete(id);
@@ -60,12 +69,20 @@ const AdminDashboard = () => {
   return (
     <>
       <h3>중도이탈 위험학생 전체 리스트</h3>
-      <button onClick={handleBulkDelete}>선택 항목 삭제</button>
+      <button onClick={handleBulkDelete} disabled={checkedIds.size === 0}>
+        선택 항목 삭제
+      </button>
       <div className="table-wrapper">
         <table className="course-table">
           <thead>
             <tr>
-              <th></th>
+              <th>
+                <input
+                  type="checkbox"
+                  onChange={handleAllCheck}
+                  checked={risks.length > 0 && checkedIds.size === risks.length}
+                />
+              </th>
               <th>분석 날짜</th>
               <th>학과</th>
               <th>학번</th>
@@ -79,7 +96,9 @@ const AdminDashboard = () => {
           <tbody>
             {risks.length === 0 ? (
               <tr>
-                <td>데이터가 없습니다.</td>
+                <td colSpan="9" className="no-data">
+                  데이터가 없습니다.
+                </td>
               </tr>
             ) : (
               risks.map((risk) => (

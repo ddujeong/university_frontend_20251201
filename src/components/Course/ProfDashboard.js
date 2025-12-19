@@ -7,8 +7,6 @@ import Modal from "../Modal";
 const ProfDashboard = ({ user }) => {
   const navigate = useNavigate();
 
-  const [professorId, setProfessorId] = useState(null);
-  const [professorname, setProfessorname] = useState();
   const [risks, setRisks] = useState([]); // 전체 데이터
   const [filteredRisks, setFilteredRisks] = useState([]); // 필터링된 데이터
   const [filterLevel, setFilterLevel] = useState("ALL"); // 필터 상태
@@ -27,7 +25,7 @@ const ProfDashboard = ({ user }) => {
     } catch (err) {
       showModal({
         type: "alert",
-        message: "목록을 불러오는 데 실패했습니다.",
+        message: "학생목록을 불러오는 데 실패했습니다.",
       });
     }
   }, [user?.id, showModal]);
@@ -152,7 +150,9 @@ const ProfDashboard = ({ user }) => {
       {/* 헤더 & 컨트롤 패널 */}
       <h3>중도이탈 위험학생 리스트</h3>
 
-      <button onClick={handleBulkDelete}>선택 항목 삭제</button>
+      <button onClick={handleBulkDelete} disabled={checkedIds.size === 0}>
+        선택 항목 삭제
+      </button>
 
       {/* 데이터 테이블 */}
       <div className="table-wrapper">

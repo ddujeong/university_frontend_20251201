@@ -35,9 +35,7 @@ const AdminPage = () => {
     <>
       <h3>위험군 학생 분석</h3>
       <div>
-        <p>
-          3월,9월 자동실행, 필요 시 수동으로 실행할 수 있습니다.
-        </p>
+        <p>학기 중 자동실행, 필요 시 수동으로 실행할 수 있습니다.</p>
         <button onClick={runAnalysis} disabled={isAnalyzing}>
           {isAnalyzing ? "분석 중..." : "중도이탈 위험 분석 즉시 실행"}
         </button>
