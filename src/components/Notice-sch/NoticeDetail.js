@@ -61,8 +61,8 @@ const NoticeDetail = ({ noticeId, role, onBack, onEdit }) => {
 
       {notice.imageUrl && (
         <img
-          className="counseling-detail-image"
-          src={`http://localhost:8888${notice.imageUrl}`}
+          className="notice-detail__image"
+          src={notice.imageUrl}
           alt="첨부 이미지"
         />
       )}

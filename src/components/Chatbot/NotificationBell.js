@@ -10,7 +10,7 @@ const NotificationBell = ({ user, openChatbot }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const { showModal } = useModal();
-
+  const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8888";
   // 1. 초기 데이터 로드 (새로고침 시 기존 알림 가져오기)
   useEffect(() => {
     if (user) {
@@ -33,8 +33,8 @@ const NotificationBell = ({ user, openChatbot }) => {
 
     const token = localStorage.getItem("token"); // 또는 쿠키 등 토큰 저장 위치
     const eventSource = new EventSourcePolyfill(
-      "http://localhost:8888/api/notification/subscribe", // 백엔드 주소 확인
-      //   `${baseUrl}/api/notification/subscribe`, // ★ AWS 배포할때
+      //"http://localhost:8888/api/notification/subscribe", // 백엔드 주소 확인
+      `${BASE_URL}/api/notification/subscribe`, // ★ AWS 배포할때
       {
         headers: {
           Authorization: `Bearer ${token}`,

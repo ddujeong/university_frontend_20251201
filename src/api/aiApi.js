@@ -52,7 +52,7 @@ export const notiApi = {
   // [추가] 알림 삭제
   deleteNotification: (id) => api.delete(`/notification/${id}`),
 
-  // 교수 -> 학생 알림 보내기기기기기기기기기기기기기기
+  // 교수 -> 학생 알림 보내기
   sendDirectMessage: (targetStudentId, content) =>
     api.post("/notification/send-direct", { targetStudentId, content }),
 };

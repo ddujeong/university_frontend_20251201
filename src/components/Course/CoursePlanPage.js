@@ -105,9 +105,10 @@ const CoursePlanPage = ({ user, role, show, onClose, subjectId }) => {
   return (
     <div className="break-modal-overlay">
       <div className="break-modal-content">
+        {!isEditing && (
         <button className="break-modal-close" onClick={onClose}>
           ×
-        </button>
+        </button>)}
         <h3>강의 계획서 조회</h3>
         <table className="break-modal-table">
           <tbody>

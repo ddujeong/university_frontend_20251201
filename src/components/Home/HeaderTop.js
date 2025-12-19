@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./Header.css";
 const HeaderTop = ({ user, logout }) => {
   return (
     <div className="header-top">

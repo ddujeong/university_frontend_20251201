@@ -35,68 +35,148 @@
 /* 드롭다운 스타일 */
 .noti-dropdown {
   position: absolute;
-  top: 40px;
-  right: -10px; /* 오른쪽 정렬 */
-  width: 320px;
+  top: 45px;
+  right: -5px;
+  width: 340px; /* 너비 조금 더 확보 */
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #eee;
+  border-radius: 12px; /* 둥근 모서리 강화 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12); /* 그림자 더 부드럽게 */
   z-index: 1000;
   overflow: hidden;
+  animation: slideIn 0.2s ease-out; /* 나타날 때 애니메이션 */
 }
-
+/* 나타날 때 부드럽게 */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .noti-header {
-  padding: 10px 15px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #eee;
-  font-weight: bold;
-  font-size: 14px;
+  padding: 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 700;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .noti-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
+  max-height: 350px;
   overflow-y: auto;
+}
+/* 스크롤바 디자인 (크롬, 사파리 등) */
+.noti-list::-webkit-scrollbar {
+  width: 6px;
+}
+.noti-list::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 3px;
 }
 
 .noti-item {
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
+  position: relative; /* 삭제 버튼 위치 잡기 위해 필수 */
+  padding: 15px;
+  border-bottom: 1px solid #f5f5f5;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .noti-item:hover {
   background-color: #f1f3f5;
 }
 
-/* 안 읽은 알림 (배경색 강조) */
+/* 안 읽은 알림: 배경색 + 왼쪽 파란띠 포인트 */
 .noti-item.unread {
-  background-color: #e6f7ff;
+  background-color: #f0f7ff; /* 아주 연한 파란색 */
+}
+.noti-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #1890ff; /* 읽지 않음 강조선 */
 }
 
+/* 읽은 알림: 텍스트 흐리게 */
 .noti-item.read {
   background-color: white;
-  color: #999;
+  opacity: 0.7;
 }
 
+/* 텍스트 내용 */
 .noti-content {
-  margin: 0 0 5px 0;
-  font-size: 13px;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  padding-right: 20px; /* 삭제 버튼 공간 확보 */
+  word-break: keep-all; /* 단어 단위 줄바꿈 */
 }
 
+/* 날짜 스타일 */
 .noti-date {
   font-size: 11px;
-  color: #aaa;
+  color: #999;
+  align-self: flex-end; /* 오른쪽 정렬 */
+}
+
+/* 삭제 버튼 (X) 스타일 개선 */
+.delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #cc4949;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background-color: #ffeaea;
+  color: #ff4d4f;
 }
 
 .noti-empty {
-  padding: 20px;
+  padding: 40px 20px;
   text-align: center;
   color: #999;
-  font-size: 13px;
+  font-size: 14px;
+}
+
+/* 알림 태그 스타일 (React 코드 수정 필요) */
+.noti-tag {
+  font-weight: 700;
+  margin-right: 6px;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.noti-tag.prof {
+  background-color: #e6f7ff;
+  color: #096dd9;
+}
+
+.noti-tag.ai {
+  background-color: #fff7e6;
+  color: #d46b08;
 }

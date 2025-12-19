@@ -53,7 +53,13 @@ const Header = ({ user, logout, role }) => {
 
         <div className="main-header">
           <div className="logo">
-            <Link to="/">학교 로고</Link>
+            <Link to="/">
+             <img 
+                src="/logo.png" 
+                alt="NURI UNIVERSITY" 
+                style={{ height: "170px", objectFit: "contain" }} /* 크기 조절 예시 */
+              />
+            </Link>
           </div>
 
           <nav className="nav-menu">

@@ -34,16 +34,19 @@
 
 .schedule__item-title {
   font-weight: 500;
+  cursor: pointer;
 }
 
 .schedule__item-date {
   color: #888;
   font-size: 14px;
+  cursor: default;
 }
 
 .schedule__icon {
   color: #0d4a8f;
   margin-right: 8px;
+  cursor: default;
 }
 
 .schedule__item:hover {

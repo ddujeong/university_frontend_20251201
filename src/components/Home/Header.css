@@ -81,6 +81,81 @@
 .nav-menu a:hover {
   color: #ff6f61;
 }
+/* ================= HeaderTop ================= */
+.header-top {
+  background-color: #f5f5f5;
+  color: #333;
+  font-size: 14px;
+  padding: 6px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  z-index: 1100;
+  border-bottom: 1px solid #e0e0e0; /* 헤더 구분선 살짝 추가 */
+}
+
+.header-top ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-top li {
+  margin: 0 6px;
+  display: flex;
+  align-items: center;
+  cursor: default; /* 텍스트 위에서 I자 커서 방지 */
+}
+
+.divider {
+  margin: 0 10px;
+  color: #ccc; /* 구분선 색상 연하게 */
+  font-size: 12px;
+}
+
+.material-li {
+  display: flex;
+  align-items: center;
+}
+
+/* 1. 로그아웃 아이콘 (버튼과 어울리게 위치 조정) */
+.logout-icon {
+  color: #ff6f61;
+  font-size: 20px;
+  cursor: pointer;
+  /* 아이콘도 버튼처럼 보이게 하려면 아래 여백 조정 */
+  margin-right: -2px; 
+}
+
+/* 2. 로그아웃 버튼 스타일 */
+.btn.logout {
+  /* 박스 형태 잡기 */
+  background-color: #fff;       /* 흰색 배경으로 회색 헤더와 대비 */
+  border: 1px solid #ff6f61;    /* 테마 강조색 테두리 */
+  border-radius: 20px;          /* 둥근 캡슐 모양 */
+  padding: 4px 14px;            /* 안쪽 여백 확보 */
+  margin-left: 5px;             /* 아이콘과의 간격 */
+  
+  /* 텍스트 스타일 */
+  color: #ff6f61;               /* 글자색도 강조색 */
+  font-size: 13px;
+  font-weight: 700;             /* 굵게 */
+  
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 살짝 그림자 */
+}
+
+/* 3. 마우스 올렸을 때 (색상 반전 효과) */
+.btn.logout:hover {
+  background-color: #ff6f61;    /* 배경을 강조색으로 채움 */
+  color: #fff;                  /* 글자를 흰색으로 */
+  box-shadow: 0 2px 5px rgba(255, 111, 97, 0.3); /* 그림자 강조 */
+  transform: translateY(-1px);  /* 살짝 떠오르는 느낌 */
+}
 
 /* ================= 모바일 ================= */
 .mobile-menu-icon {

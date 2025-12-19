@@ -131,7 +131,7 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
     };
   });
 
-  // 3. 슬롯 열기/닫기 핸들러 (🚨 API 전송 데이터 형식 수정)
+  // 3. 슬롯 열기/닫기 핸들러 ( API 전송 데이터 형식 수정)
   const handleSlotAction = async (slot) => {
     if (loading) return;
     setLoading(true);
