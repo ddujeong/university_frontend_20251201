@@ -43,14 +43,11 @@ const NotificationBell = ({ user, openChatbot }) => {
       }
     );
 
-    eventSource.onopen = () => {
-      console.log("🔔 실시간 알림 서버 연결 성공");
-    };
+    eventSource.onopen = () => {};
 
     // [이벤트 수신] 백엔드에서 emitter.send().name("notification") 한 것
     eventSource.addEventListener("notification", (e) => {
       const newNoti = JSON.parse(e.data); // 전송된 알림 데이터
-      console.log("새 알림 도착!", newNoti);
 
       // 기존 목록 맨 앞에 새 알림 추가
       setNotifications((prev) => [newNoti, ...prev]);
@@ -71,7 +68,6 @@ const NotificationBell = ({ user, openChatbot }) => {
     // 컴포넌트가 사라질 때(언마운트) 연결 끊기
     return () => {
       eventSource.close();
-      console.log("🔔 알림 연결 종료");
     };
   }, [user]);
 
@@ -90,9 +86,6 @@ const NotificationBell = ({ user, openChatbot }) => {
 
   // 3. 알림 클릭 처리
   const handleClick = async (noti) => {
-    console.log("👉 클릭된 알림 데이터:", noti);
-    console.log("👉 이동하려는 URL:", noti.url);
-
     try {
       // 읽음 처리 (API 호출) / 백엔드 isread 변경
       if (!noti.Checked) {
@@ -122,13 +115,11 @@ const NotificationBell = ({ user, openChatbot }) => {
           );
 
           if (!isConfirmed) {
-            console.log("페이지 이동 취소됨.");
             return; // '아니오'를 누르면 여기서 함수 종료
           }
         }
 
         // 페이지 이동 실행
-        console.log("🚀 페이지 이동 시도:", noti.url);
         navigate(noti.url);
         setIsOpen(false); // 창 닫기
       } else {

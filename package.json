@@ -17,6 +17,7 @@
     "date-fns-tz": "^3.2.0",
     "event-source-polyfill": "^1.0.31",
     "janus-gateway": "^1.3.3",
+    "janus-gateway-js": "^2.0.2",
     "react": "^19.2.0",
     "react-calendar": "^6.0.0",
     "react-datepicker": "^9.0.0",

@@ -4,10 +4,10 @@ import SectionLayout from "../components/Layout/SectionLayout";
 import GradeThisSemester from "../components/Grade/GradeThisSemester";
 import GradeBySemester from "../components/Grade/GradeBySemester";
 import GradeTotal from "../components/Grade/GradeTotal";
-import EvaluationForm from "../components/Evaluation/EvaluationForm";
 import Modal from "../components/Modal";
 import api from "../api/axiosConfig";
 import { useModal } from "../components/ModalContext";
+import EvaluationForm from "../components/Grade/EvaluationForm";
 
 const GradePage = () => {
   const [activeTab, setActiveTab] = useState("this"); // this | semester | total
@@ -40,7 +40,7 @@ const GradePage = () => {
 
       if (activeTab === "this") {
         res = await api.get("/grade/thisSemester", {
-          params: { year: 2025, semester: 2 },
+          params: { year: 2025, semester: 1 },
         });
       } else if (activeTab === "semester") {
         res = await api.get("/grade/semester", {

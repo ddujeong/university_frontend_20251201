@@ -5,7 +5,7 @@ import ProfCourse from "../components/Course/ProfCourse";
 import ProfEvaluation from "../components/Course/ProfEvalution";
 import AllCourse from "../components/Course/AllCourse";
 import "./CoursePage.css";
-import ProfDashboard from "./ProfDashboard";
+import ProfDashboard from "../components/Course/ProfDashboard";
 const CoursePage = ({ role, user }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -18,21 +18,20 @@ const CoursePage = ({ role, user }) => {
     return "전체 강의 조회";
   };
   const [activeTab, setActiveTab] = useState(getInitialTab);
-  
+
   const menuItems =
     role === "professor"
       ? ["전체 강의 조회", "내 강의 조회", "내 강의 평가", "위험 학생 조회"]
       : ["전체 강의 조회"];
   // 3. URL의 ?tab= 값 읽어오기 (없으면 null)
-  
-  
+
   useEffect(() => {
     if (tabParam === "danger") setActiveTab("위험 학생 조회");
     else if (tabParam === "mycourse") setActiveTab("내 강의 조회");
     else if (tabParam === "eval") setActiveTab("내 강의 평가");
     // tabParam이 없을 때는 굳이 "전체 강의 조회"로 강제 이동하지 않음 (사용자가 보고 있던 탭 유지)
   }, [tabParam]);
-  
+
   /* ===== Sidebar ===== */
   const sidebar = (
     <ul className="section-menu">
@@ -58,7 +57,7 @@ const CoursePage = ({ role, user }) => {
             <ProfCourse role={role} user={user} />
           )}
           {activeTab === "내 강의 평가" && <ProfEvaluation />}
-          {activeTab === "위험 학생 조회" && <ProfDashboard />}
+          {activeTab === "위험 학생 조회" && <ProfDashboard user={user} />}
         </>
       )}
     </SectionLayout>

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 import { useModal } from "../ModalContext";
+import Pagination from "../Layout/Pagination";
 
 const Classroom = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [newRoom, setNewRoom] = useState("");
   const [colleges, setColleges] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [newCollegeId, setNewCollegeId] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const { showModal } = useModal();
@@ -24,14 +27,18 @@ const Classroom = () => {
   useEffect(() => {
     getList();
     getColleges();
-  }, []);
+  }, [page]);
 
   const getList = async () => {
     try {
-      const res = await api.get("/admin/room");
-      const data =
-        res.data.content || (Array.isArray(res.data) ? res.data : [res.data]);
-      setClassrooms(data);
+      const res = await api.get("/admin/room", { params: { page } });
+      if (res.data && res.data.content) {
+        setClassrooms(res.data.content); // 목록 세팅
+        setTotalPages(res.data.totalPages); // 전체 페이지 수 세팅
+      } else {
+        setClassrooms([]);
+        setTotalPages(0);
+      }
     } catch (err) {
       console.error(err);
       setClassrooms([]);
@@ -146,6 +153,7 @@ const Classroom = () => {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
 };

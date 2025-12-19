@@ -9,7 +9,6 @@ const Header = ({ user, logout, role }) => {
   const location = useLocation();
 
   const toggleMobileMenu = () => {
-    console.log("햄버거 클릭");
     setMobileMenuOpen((prev) => !prev);
   };
 
@@ -27,17 +26,24 @@ const Header = ({ user, logout, role }) => {
       ? [
           { label: "학사관리", path: "/academic" },
           { label: "등록", path: "/registration" },
+          { label: "학사정보", path: "/academicPage" },
         ]
-      : [{ label: "수업", path: "/course" }]),
-    ...(role === "student"
+      : role === "professor"
       ? [
+          { label: "수업", path: "/course" },
+          { label: "상담", path: "/counseling" },
+          { label: "학사정보", path: "/academicPage" },
+        ]
+      : role === "student"
+      ? [
+          { label: "수업", path: "/course" },
           { label: "수강", path: "/sugang" },
           { label: "성적", path: "/grade" },
-          { label: "상담", path: "/student-schedule" },
+          { label: "상담", path: "/counseling" },
+          { label: "학사정보", path: "/academicPage" },
         ]
       : []),
-    { label: "학사정보", path: "/academicPage" },
-    { label: "회의", path: "/videoroom" },
+    // { label: "회의", path: "/videoroom" }, // 모든 역할 공통으로 보이길 원하면 여기에
   ];
 
   return (

@@ -11,7 +11,6 @@ const TuitionNotice = ({ user }) => {
       try {
         const res = await api.get("/tuition/payment");
         setTuitionNotice(res.data);
-        console.log(res.data);
       } catch (err) {
         console.error(err);
         if (err.response?.data?.message?.includes("휴학")) {
@@ -22,7 +21,7 @@ const TuitionNotice = ({ user }) => {
         } else {
           setTuitionNotice({
             status: null,
-            error: "등록금 고지서를 불러오는 중 오류가 발생했습니다.",
+            error: err.response?.data?.message,
           });
         }
       } finally {

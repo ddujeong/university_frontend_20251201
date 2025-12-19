@@ -11,7 +11,6 @@ const TuitionHistory = ({ user }) => {
       try {
         const res = await api.get("/tuition/me");
         setTuitionHistory(res.data); // 백엔드에서 내려주는 리스트
-        console.log(res.data);
       } catch (err) {
         console.error(err);
         showModal({

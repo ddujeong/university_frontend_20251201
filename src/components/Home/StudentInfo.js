@@ -14,7 +14,6 @@ const StudentInfo = ({ user, role, logout }) => {
     }
     return "";
   };
-  console.log("🔥 StudentInfo openChatbot:", openChatbot);
 
   return (
     <section className="student-info">

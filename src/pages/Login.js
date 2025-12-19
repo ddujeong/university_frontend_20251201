@@ -47,7 +47,6 @@ const LoginPage = ({ setUser, setRole }) => {
   // 아이디 찾기 처리
   const handleFindId = async () => {
     try {
-      console.log("보내는 데이터:", modalData); // 확인용
       const response = await api.post("/user/findId", {
         name: modalData.name,
         email: modalData.email,

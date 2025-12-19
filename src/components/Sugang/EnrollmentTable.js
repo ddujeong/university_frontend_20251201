@@ -21,13 +21,13 @@ const EnrollmentTable = ({
         </tr>
       </thead>
       <tbody>
-        {subjects.length === 0 ? (
+        {subjects?.length === 0 ? (
           <tr>
             <td colSpan="9">개설된 강좌가 없습니다.</td>
           </tr>
         ) : (
           subjects.map((sub) => {
-            const isApplied = myEnrolledIds.includes(sub.id);
+            const isApplied = myEnrolledIds?.includes(sub.id) || false;
 
             // ★ [변경] 기간 0일 때는 정원 마감 개념이 없음 (무조건 false)
             // 기간 1일 때만 실제 인원(numOfStudent)과 정원(capacity) 비교

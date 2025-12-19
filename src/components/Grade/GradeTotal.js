@@ -1,5 +1,4 @@
 const GradeTotal = ({ data }) => {
-  console.log(data);
   return (
     <>
       <div className="table-wrapper">

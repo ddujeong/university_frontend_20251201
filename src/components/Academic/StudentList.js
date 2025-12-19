@@ -1,47 +1,47 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 import { useModal } from "../ModalContext";
+import Pagination from "../Layout/Pagination";
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchDept, setSearchDept] = useState("");
   const [searchId, setSearchId] = useState("");
-  const [loading, setLoading] = useState(false); // 추가
+  const [loading, setLoading] = useState(false);
   const { showModal } = useModal();
   useEffect(() => {
     getList();
-  }, []);
+  }, [page]);
   const getList = async () => {
     try {
-      const res = await api.get("/staff/list/student");
-      const data =
-        res.data.content || (Array.isArray(res.data) ? res.data : [res.data]);
-      setStudents(data);
-    } catch (err) {
-      setStudents([]);
-      showModal({
-        type: "alert",
-        message: "학생 목록을 불러오는데 실패했습니다.",
-      });
-    }
-  };
-  const getSerchList = async () => {
-    try {
-      const params = {};
+      const params = { page }; // 4. 페이지 파라미터 추가
       if (searchDept) params.deptId = searchDept;
       if (searchId) params.studentId = searchId;
 
       const res = await api.get("/staff/list/student", { params });
-      setStudents(
-        res.data.content || (Array.isArray(res.data) ? res.data : [res.data])
-      ); // PageResponse 구조면 content 사용
+
+      // 백엔드 PageResponse 구조에 맞춰 데이터 세팅
+      if (res.data.content) {
+        setStudents(res.data.content);
+        setTotalPages(res.data.totalPages);
+      } else {
+        // 단일 조회(studentId) 시 데이터가 객체로 올 경우 대비
+        const singleData = Array.isArray(res.data) ? res.data : [res.data];
+        setStudents(singleData);
+        setTotalPages(1);
+      }
     } catch (err) {
       setStudents([]);
-      showModal({
-        type: "alert",
-        message: "학생 목록을 불러오는데 실패했습니다.",
-      });
+      showModal({ type: "alert", message: "목록 조회 실패" });
     }
+  };
+
+  // 조회 버튼 클릭 시 0페이지부터 다시 검색
+  const handleSearch = () => {
+    setPage(0);
+    getList();
   };
   const handleUpdateGrades = async () => {
     setLoading(true);
@@ -65,28 +65,26 @@ const StudentList = () => {
   return (
     <>
       <h3>학생 명단 조회</h3>
-      <div className="filter-container">
-        <div className="form-row">
-          <input
-            type="text"
-            value={searchDept}
-            onChange={(e) => setSearchDept(e.target.value)}
-            placeholder="학과 번호"
-          />
+      <div className="department-form">
+        <input
+          type="text"
+          value={searchDept}
+          onChange={(e) => setSearchDept(e.target.value)}
+          placeholder="학과 번호"
+        />
 
-          <input
-            type="text"
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            placeholder="학번"
-          />
-          <button onClick={getSerchList} className="search-btn">
-            조회
-          </button>
-          <button onClick={handleUpdateGrades} disabled={loading}>
-            {loading ? "업데이트 중..." : "새학기 적용"}
-          </button>
-        </div>
+        <input
+          type="text"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          placeholder="학번"
+        />
+        <button onClick={handleSearch} className="search-btn">
+          조회
+        </button>
+        <button onClick={handleUpdateGrades} disabled={loading}>
+          {loading ? "업데이트 중..." : "새학기 적용"}
+        </button>
       </div>
       <div className="table-wrapper">
         <table className="course-table">
@@ -132,6 +130,7 @@ const StudentList = () => {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
 };

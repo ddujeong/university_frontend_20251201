@@ -1,0 +1,175 @@
+/* 제목 */
+.counseling-detail-header {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.counseling-detail-category {
+  background-color: #4f46e5;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 학생 이름 / 일시 / 조회수 등 정보 */
+.counseling-detail-info {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+/* 이미지 */
+.counseling-detail-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 12px 0;
+  display: block;
+}
+
+/* 내용 */
+.counseling-detail-content {
+  font-size: 1rem;
+  color: #111827;
+  margin-bottom: 16px;
+  white-space: pre-line;
+}
+
+/* 버튼 */
+.counseling-detail-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.counseling-detail-button {
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.counseling-detail-button--edit {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+.counseling-detail-button--delete {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.counseling-detail-button--back {
+  background-color: #9ca3af;
+  color: #fff;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  resize: vertical;
+  min-height: 120px;
+  margin-bottom: 12px;
+}
+/* 전체 폼 */
+.notice-form {
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 제목 */
+.notice-form__title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 그룹(라벨 + 입력) */
+.notice-form__group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 라벨 */
+.notice-form__label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+/* 입력, 셀렉트, 텍스트 영역 */
+.notice-form__input,
+.notice-form__textarea,
+.notice-form__select,
+.notice-form__file {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.notice-form__input:focus,
+.notice-form__textarea:focus,
+.notice-form__select:focus {
+  border-color: #4a90e2;
+}
+
+.notice-form__textarea {
+  resize: vertical;
+  min-height: 300px;
+}
+
+/* 버튼 영역 */
+.notice-form__buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* 버튼 스타일 */
+.notice-form__btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.notice-form__btn--submit {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.notice-form__btn--submit:hover {
+  background-color: #357ab8;
+}
+
+.notice-form__btn--cancel {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.notice-form__btn--cancel:hover {
+  background-color: #e0e0e0;
+}

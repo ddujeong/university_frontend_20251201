@@ -10,7 +10,7 @@ import TuitionNotice from "../components/Academic/TuitionNotice";
 import BreakManagement from "../components/Academic/BreakManagement";
 import CoursePeriod from "../components/Academic/CoursePeriod";
 import "./Academic.css";
-import AdminPage from "./AdminPage";
+import AdminPage from "../components/Academic/AdminPage";
 
 const Academic = ({ role }) => {
   const [activeTab, setActiveTab] = useState("studentList");

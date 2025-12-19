@@ -1,1794 +1,287 @@
-/* StudentSchedulePage.css */
-
-/* --- Base CSS (공통) --- */
-
-/* 공통 페이지 컨테이너 */
-.page-container {
-  display: flex;
-  gap: 20px;
-  padding: 40px;
-  background-color: #f5f5f5;
-  min-height: calc(100vh - 80px); /* 헤더/푸터 제외 높이 */
-}
-
-/* 사이드바 */
-.page-sidebar {
-  width: 220px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-  transition: transform 0.3s ease-in-out;
-}
-
-.page-sidebar h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #333;
-}
-
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-item {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  transition: background 0.2s;
-  color: #333;
-}
-
-.sidebar-item:hover,
-.sidebar-item.active {
-  background-color: #ff6f61;
-  color: #fff;
-}
-
-/* 메인 카드 영역 */
-.page-card {
-  flex: 1;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  min-width: 300px;
-}
-
-.card-title {
-  margin-bottom: 20px;
-  color: #333;
-  /* 💡 타이틀 가독성을 위해 추가 */
-  font-size: 24px;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-}
-
-/* input, button 공통 */
-.page-card input,
-.page-card select,
-.page-card textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  margin-bottom: 10px; /* 공통 마진 추가 */
-}
-
-.page-card button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background-color: #ff6f61;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 16px; /* 폰트 크기 조정 */
-}
-
-.page-card button:hover {
-  background-color: #e65a4f;
-}
-
-/* 로딩 텍스트 */
-.loading-text {
-  padding: 40px;
-  text-align: center;
-  font-size: 16px;
-  color: #555;
-}
-
-/* --- StudentSchedulePage (페이지별 추가/수정 스타일) --- */
-
-/* 목록/예약 화면을 중앙에 배치하고 너비를 제한 */
-.main-content-card {
-  max-width: 800px;
-  margin: 0 auto; /* 중앙 정렬 */
-}
-
-/* 목록으로 돌아가기 버튼 스타일 (다른 색상 적용) */
-.btn-back {
-  background-color: #555; /* 회색 계열 */
-  margin-bottom: 20px;
-}
-
-.btn-back:hover {
-  background-color: #333;
-}
-
-/* 접근 거부 메시지 스타일 */
-.access-denied-message {
-  padding: 20px;
-  color: #d9534f; /* red */
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  border-radius: 8px;
-  margin: 40px auto;
-  max-width: 400px;
-  text-align: center;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 900px) {
-  .page-container {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .page-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    z-index: 1000;
-  }
-
-  .page-sidebar.open {
-    transform: translateX(0);
-  }
-
-  /* 모바일에서 카드 너비 조정 */
-  .page-card {
-    width: 100%;
-    min-width: unset;
-  }
-
-  /* main-content-card 중앙 정렬 해제 */
-  .main-content-card {
-    margin: 0;
-    max-width: 100%;
-  }
-
-  .sidebar-toggle {
-    display: block;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    font-size: 28px;
-    cursor: pointer;
-    z-index: 1100;
-  }
-}
-/* ProfessorSchedulePage.css */
-
-/* --- Base CSS (공통) --- */
-
-/* 공통 페이지 컨테이너 */
-.page-container {
-  display: flex;
-  gap: 20px;
-  padding: 40px;
-  background-color: #f5f5f5;
-  min-height: calc(100vh - 80px);
-  justify-content: center; /* 교수 페이지는 중앙 정렬 */
-}
-
-/* 메인 카드 영역 */
-.page-card {
-  flex: 1;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  min-width: 300px;
-}
-
-.card-title {
-  margin-bottom: 25px;
-  color: #333;
-  font-size: 28px;
-  border-bottom: 2px solid #ff6f61; /* 주요 색상으로 강조 */
-  padding-bottom: 10px;
-}
-
-/* input, button 공통 (ProfessorAvailability 컴포넌트 내부 포함) */
-.page-card input,
-.page-card select,
-.page-card textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.page-card button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background-color: #ff6f61;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 16px;
-}
-
-.page-card button:hover {
-  background-color: #e65a4f;
-}
-
-/* 접근 거부 메시지 스타일 */
-.access-denied-message {
-  padding: 20px;
-  color: #d9534f; /* red */
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  border-radius: 8px;
-  margin: 40px auto;
-  max-width: 400px;
-  text-align: center;
-}
-
-/* --- ProfessorSchedulePage (페이지별 스타일) --- */
-
-.professor-schedule-card {
-  max-width: 900px; /* 적당한 최대 너비 설정 */
-  width: 100%;
-  margin: 0; /* page-container가 중앙 정렬을 맡음 */
-}
-
-.section-container {
-  margin-bottom: 35px;
-  padding: 20px;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  background-color: #fafafa;
-}
-
-.section-title {
-  font-size: 20px;
-  color: #555;
-  margin-bottom: 15px;
-  border-left: 5px solid #ff6f61;
-  padding-left: 10px;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 900px) {
-  .page-container {
-    padding: 20px;
-    flex-direction: column;
-  }
-  .professor-schedule-card {
-    max-width: 100%;
-    padding: 15px;
-  }
-  .card-title {
-    font-size: 24px;
-  }
-  .section-container {
-    padding: 15px;
-  }
-}
-/* StudentScheduleList.css */
-
-.schedule-list-container {
-  margin-bottom: 25px;
-}
-
-.list-section-title {
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 15px;
-  border-bottom: 1px dashed #ddd;
-  padding-bottom: 5px;
-}
-
-/* 정보 메시지 (로그인 필요, 예약 없음) */
-.info-message {
-  padding: 15px;
-  background-color: #f0f0f0;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.schedule-list {
-  list-style: none;
-  padding: 0;
-}
-
-/* 리스트 아이템 스타일 */
-.schedule-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  border-radius: 6px;
-  margin-bottom: 8px; /* 인라인 스타일 5px 대신 8px 적용 */
-  background-color: #fff;
-  border: 1px solid #f0f0f0;
-  transition: background-color 0.2s;
-}
-
-.schedule-item:hover {
-  background-color: #fffaf0; /* 호버 효과 */
-}
-
-/* 클릭 가능한 텍스트 부분 */
-.schedule-info-clickable {
-  cursor: pointer;
-  font-weight: bold;
-  color: #333;
-  flex-grow: 1; /* 공간 확보 */
-  margin-right: 15px;
-}
-
-.professor-name {
-  color: #ff6f61;
-}
-
-.schedule-time {
-  color: #007bff; /* 시간 강조 */
-}
-
-/* 상태별 스타일 (선택적) */
-.schedule-status {
-  font-weight: normal;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.status-확인됨 .schedule-status {
-  background-color: #e6ffe6;
-  color: #28a745; /* 초록색 */
-}
-
-.status-취소됨 .schedule-status {
-  background-color: #ffe6e6;
-  color: #dc3545; /* 빨간색 */
-}
-
-/* 취소 버튼 */
-.cancel-btn {
-  /* 기존 .page-card button 스타일을 상속받되, 마진만 수정 */
-  margin-left: 10px; /* 인라인 스타일 유지 */
-  padding: 5px 10px;
-  font-size: 14px;
-  background-color: #dc3545; /* 취소 버튼은 빨간색으로 */
-}
-
-.cancel-btn:hover:not(:disabled) {
-  background-color: #c82333;
-}
-
-.cancel-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .schedule-item {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
-
-  .schedule-info-clickable {
-    margin-bottom: 5px;
-  }
-
-  .cancel-btn {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%; /* 모바일에서 버튼 폭을 넓게 */
-  }
-}
-/* StudentCounselingDetail.css */
-
-/* 상세 정보 카드 컨테이너 */
-.counseling-detail-card {
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px; /* 5px에서 8px로 변경하여 통일감 부여 */
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.detail-section-title {
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-/* 정보 그룹 */
-.detail-info-group {
-  margin-bottom: 20px;
-}
-
-.detail-info-item {
-  margin-bottom: 8px;
-  padding: 5px 0;
-  border-bottom: 1px dotted #eee;
-}
-
-.detail-info-item:last-child {
-  border-bottom: none;
-}
-
-.info-label {
-  display: inline-block;
-  width: 120px; /* 라벨 너비를 고정하여 값의 정렬을 맞춥니다. */
-  font-weight: bold;
-  color: #555;
-}
-
-.info-value {
-  color: #333;
-}
-
-.professor-name-detail {
-  color: #ff6f61; /* 교수 이름 강조 */
-  font-weight: 600;
-}
-
-/* 상태 배지 */
-.status-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.9em;
-  font-weight: bold;
-}
-
-.status-확인됨,
-.status-CONFIRMED {
-  background-color: #d4edda;
-  color: #155724; /* 초록색 */
-}
-
-.status-예약됨 {
-  background-color: #fff3cd;
-  color: #856404; /* 노란색 */
-}
-
-.status-취소됨,
-.status-CANCELLED {
-  background-color: #f8d7da;
-  color: #721c24; /* 빨간색 */
-}
-
-/* 상담 시작 버튼 */
-.btn-start-counseling {
-  /* 공통 .page-card button 스타일 상속 */
-  margin-top: 15px; /* 인라인 스타일 10px 대신 15px */
-  background-color: #007bff; /* 파란색 계열로 변경 */
-}
-
-.btn-start-counseling:hover {
-  background-color: #0056b3;
-}
-
-/* 로딩/에러 메시지 */
-.loading-text,
-.info-message {
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.info-message {
-  background-color: #e2e3e5;
-  color: #383d41;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .counseling-detail-card {
-    padding: 15px;
-  }
-
-  .info-label {
-    width: 100%;
-    margin-bottom: 3px;
-  }
-
-  .detail-info-item {
-    display: flex;
-    flex-direction: column;
-  }
-}
-/* ProfessorScheduleRequests.css */
-
-/* 요청 목록 컨테이너 (ProfessorSchedulePage의 .section-container 내부에 위치함) */
-.request-list-container {
-  margin-top: 10px;
-}
-
-.list-title {
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 15px;
-  border-bottom: 1px dashed #ddd;
-  padding-bottom: 5px;
-}
-
-/* 로딩/에러/정보 메시지 */
-.loading-text {
-  padding: 15px;
-  text-align: center;
-  color: #555;
-  font-size: 16px;
-}
-
-.info-message {
-  padding: 15px;
-  color: #6c757d;
-  background-color: #e9ecef;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.request-ul {
-  list-style: none;
-  padding: 0;
-}
-
-/* 리스트 아이템 */
-.request-item {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  background-color: #fff;
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-
-.request-item:hover {
-  background-color: #fcfcfc;
-}
-
-.request-info-header {
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-.request-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* 상태 배지 */
-.status-badge {
-  font-weight: bold;
-  margin-right: 15px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-/* 상태별 색상 */
-.status-pending .status-badge {
-  background-color: #fff3cd; /* 노란색 (대기) */
-  color: #856404;
-}
-
-.status-confirmed .status-badge {
-  background-color: #d4edda; /* 녹색 (확인/승인) */
-  color: #155724;
-}
-
-.status-completed .status-badge {
-  background-color: #dae5f0; /* 파란색 계열 (완료) */
-  color: #1b4e82;
-}
-
-.status-canceled .status-badge {
-  background-color: #f8d7da; /* 빨간색 계열 (취소/거절) */
-  color: #721c24;
-}
-
-/* 버튼 스타일 (기존 .page-card button 스타일을 상속받는다고 가정) */
-.request-actions button {
-  padding: 6px 12px;
-  font-size: 14px;
-  margin-left: 10px;
-  white-space: nowrap;
-}
-
-.btn-approve {
-  background-color: #007bff; /* 승인: 파란색 */
-}
-
-.btn-approve:hover {
-  background-color: #0056b3;
-}
-
-.btn-reject,
-.btn-reject-confirmed {
-  background-color: #f44336; /* 거절/취소: 빨간색 */
-  margin-left: 8px;
-}
-
-.btn-reject:hover,
-.btn-reject-confirmed:hover {
-  background-color: #d32f2f;
-}
-
-.btn-complete {
-  background-color: #4caf50; /* 완료: 초록색 */
-}
-
-.btn-complete:hover {
-  background-color: #388e3c;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .request-item {
-    padding: 10px;
-  }
-  .request-info-header {
-    margin-bottom: 5px;
-  }
-  .request-actions {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-  }
-  .status-badge {
-    margin-bottom: 10px;
-    margin-left: 0;
-  }
-  .request-actions button {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-/* ProfessorAvailabilityList.css */
-
-/* 목록 컨테이너 */
-.availability-list-container {
-  margin-top: 10px; /* 인라인 스타일 10px 유지 */
-}
-
-/* 로딩/에러/정보 메시지 (ProfessorScheduleRequests.css와 동일하게 설정하여 통일) */
-.loading-text {
-  padding: 15px;
-  text-align: center;
-  color: #555;
-  font-size: 16px;
-}
-
-.info-message {
-  padding: 15px;
-  color: #6c757d;
-  background-color: #e9ecef;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.availability-ul {
-  list-style: none;
-  padding: 0;
-}
-
-/* 리스트 아이템 */
-.availability-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 8px; /* 인라인 스타일 5px 대신 8px 적용 */
-  border-radius: 6px;
-  border: 1px solid #f0f0f0;
-  transition: background-color 0.2s;
-}
-
-.availability-item:hover {
-  background-color: #fcfcfc;
-}
-
-/* 예약 가능 슬롯 */
-.status-available {
-  background-color: #e6ffe6;
-  border-left: 5px solid #28a745; /* 초록색 강조 */
-  color: #28a745;
-}
-
-/* 예약 완료 슬롯 */
-.status-booked {
-  background-color: #f5f5f5;
-  border-left: 5px solid #ccc; /* 회색 강조 */
-  color: #6c757d;
-  font-weight: normal; /* 인라인 스타일 제거 (booked일 때 bold) */
-}
-
-.slot-time {
-  font-weight: 600;
-  color: #333;
-}
-
-.slot-info {
-  font-size: 0.9em;
-  color: #888;
-}
-
-/* 상태 텍스트 (예약됨, 예약 가능) */
-.slot-status {
-  font-weight: bold;
-  margin-left: 5px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 1em;
-}
-
-.status-available.slot-status {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-booked.slot-status {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .availability-item {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
-  .slot-time {
-    margin-bottom: 5px;
-  }
-  .slot-info {
-    font-size: 0.85em;
-  }
-}
-/* ProfessorAvailability.css */
-
-/* 컨테이너 스타일 */
-.availability-form-container {
-  border: 1px solid #ccc;
-  padding: 15px;
-  margin-bottom: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.form-title {
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #333;
-  border-bottom: 1px dashed #ddd;
-  padding-bottom: 5px;
-}
-
-/* 폼 그룹 */
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
-  font-size: 14px;
-}
-
-/* DatePicker 입력 필드 스타일 */
-/* `custom-datepicker-input`은 DatePicker 컴포넌트가 렌더링하는 input 요소에 직접 적용됩니다. */
-.custom-datepicker-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  transition: border-color 0.2s;
-  height: 40px;
-}
-
-.custom-datepicker-input:focus {
-  border-color: #ff6f61;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 111, 97, 0.2);
-}
-
-/* 등록 버튼 */
-.btn-submit-availability {
-  padding: 10px 20px;
-  background: #28a745; /* 초록색 (원본 스타일) */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.btn-submit-availability:hover:not(:disabled) {
-  background: #1e7e34;
-}
-
-.btn-submit-availability:disabled {
-  background: #cccccc;
-  cursor: not-allowed;
-}
-
-/* react-datepicker 드롭다운 스타일 (필요 시 추가) */
-/* 이 부분은 react-datepicker의 기본 스타일을 오버라이드할 때 사용됩니다. */
-.react-datepicker-wrapper {
-  width: 100%; /* DatePicker가 100% 너비를 차지하도록 설정 */
-}
-/* BookAppointment.css */
-
-.book-appointment-container {
-  margin-top: 20px; /* 인라인 스타일 20px 유지 */
-}
-
-.appointment-list-title {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #ff6f61; /* 주요 색상으로 강조 */
-  padding-bottom: 5px;
-}
-
-/* 로딩/에러 메시지 (다른 컴포넌트와 통일) */
-.loading-text {
-  padding: 15px;
-  text-align: center;
-  color: #555;
-  font-size: 16px;
-}
-
-.no-slots-message {
-  padding: 15px;
-  color: #6c757d; /* 회색 (원본 스타일) */
-  background-color: #f0f0f0;
-  border-radius: 8px;
-}
-
-.available-slot-ul {
-  list-style: none;
-  padding: 0;
-}
-
-/* 리스트 아이템 */
-.available-slot-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 15px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid #eee;
-  transition: background-color 0.15s ease-in-out;
-}
-
-.available-slot-item:hover {
-  background-color: #fcfcfc;
-}
-
-.professor-info {
-  font-weight: 600;
-  color: #555;
-  margin-right: 10px;
-}
-
-.time-info {
-  flex-grow: 1;
-  color: #007bff; /* 시간 정보 강조 */
-  font-weight: 500;
-}
-
-/* 예약하기 버튼 */
-.btn-book {
-  /* 공통 버튼 스타일 상속 가정 */
-  margin-left: 15px;
-  padding: 8px 15px;
-  font-size: 14px;
-  background-color: #ff6f61; /* 주요 색상 */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-book:hover {
-  background-color: #e65a4f;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .available-slot-item {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-  }
-  .professor-info,
-  .time-info {
-    margin-bottom: 5px;
-    margin-right: 0;
-  }
-  .time-info {
-    margin-bottom: 10px;
-  }
-  .btn-book {
-    margin-left: 0;
-    margin-top: 5px;
-    width: 100%;
-  }
-}
-/* ProfessorCounselingDetail.css */
-
-/* 상세 페이지 컨테이너 */
-.counseling-detail-page {
-  border: 1px solid #ddd;
-  padding: 25px;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.detail-page-title {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* 로딩/에러/정보 메시지 (다른 컴포넌트와 통일) */
-.loading-text {
-  padding: 15px;
-  text-align: center;
-  color: #555;
-  font-size: 16px;
-}
-
-.info-message {
-  padding: 15px;
-  color: #6c757d;
-  background-color: #e9ecef;
-  border-radius: 8px;
-  text-align: center;
-}
-
-/* 스케줄 정보 그룹 */
-.schedule-info-group {
-  margin-bottom: 20px;
-}
-
-.schedule-info-item {
-  margin-bottom: 8px;
-  padding: 4px 0;
-  line-height: 1.5;
-}
-
-.info-label {
-  font-weight: bold;
-  color: #555;
-  display: inline-block;
-  width: 100px; /* 라벨 너비 고정 */
-}
-
-.info-value {
-  color: #333;
-}
-
-/* 상태 배지 */
-.status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 15px;
-  font-size: 0.9em;
-  font-weight: bold;
-  margin-left: 5px;
-}
-
-.status-확인됨,
-.status-confirmed {
-  background-color: #d4edda;
-  color: #155724; /* 초록색 */
-}
-
-.status-상담 완료,
-.status-completed {
-  background-color: #cce5ff;
-  color: #004085; /* 파란색 */
-}
-
-.status-예약됨,
-.status-pending {
-  background-color: #fff3cd;
-  color: #856404; /* 노란색 */
-}
-
-/* 구분선 */
-.detail-divider {
-  border: 0;
-  height: 1px;
-  background-color: #eee;
-  margin: 20px 0;
-}
-
-/* 상담 기록 영역 */
-.record-section-title {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #444;
-}
-
-.counseling-notes-box {
-  border: 1px solid #ccc;
-  padding: 15px;
-  white-space: pre-wrap;
-  background-color: #f9f9f9; /* 인라인 스타일 유지 */
-  border-radius: 8px;
-  min-height: 100px;
-  font-size: 14px;
-  color: #222;
-  overflow-x: auto;
-}
-
-.record-keywords {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.keywords-value {
-  color: #ff6f61; /* 키워드 강조 색상 */
-  font-weight: 500;
-}
-
-/* 버튼 그룹 */
-.action-buttons-group {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px; /* 버튼 간격 */
-}
-
-/* 버튼 기본 스타일 */
-.action-buttons-group button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.2s;
-}
-
-/* 화상 회의 시작 버튼 */
-.btn-start-video {
-  background: #007bff; /* 파란색 (인라인 스타일 유지) */
-  color: white;
-}
-
-.btn-start-video:hover {
-  background: #0056b3;
-}
-
-/* 상담 기록 작성/수정 버튼 */
-.btn-edit-record {
-  background: #17a2b8; /* 청록색 (인라인 스타일 유지) */
-  color: white;
-}
-
-.btn-edit-record:hover {
-  background: #117a8b;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .counseling-detail-page {
-    padding: 15px;
-  }
-
-  .info-label {
-    width: 80px;
-  }
-
-  .action-buttons-group {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .action-buttons-group button {
-    width: 100%;
-    padding: 12px 0;
-  }
-}
-/* CounselingRecordView.css */
-
-.counseling-record-view {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.view-title {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 25px;
-  border-bottom: 3px solid #ff6f61; /* 주요 색상으로 강조 */
-  padding-bottom: 5px;
-}
-
-/* 검색 폼 그룹 */
-.search-form-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
-  flex-wrap: wrap; /* 작은 화면에서 줄바꿈 처리 */
-}
-
-.search-input {
-  flex: 1; /* 너비를 유연하게 조정 */
-  padding: 10px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 14px;
-  min-width: 120px;
-}
-
-.search-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  outline: none;
-}
-
-.btn-search {
-  padding: 10px 20px;
-  background-color: #007bff; /* 파란색 */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  width: auto; /* 자동 너비 */
-}
-
-.btn-search:hover {
-  background-color: #0056b3;
-}
-
-/* 기록 목록 */
-.record-list {
-  list-style: none;
-  padding: 0;
-}
-
-.record-item {
-  background-color: #fff;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.record-header {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 5px;
-  border-bottom: 1px dotted #e9ecef;
-  margin-bottom: 10px;
-}
-
-.student-name {
-  font-weight: bold;
-  color: #ff6f61; /* 학생 이름 강조 */
-  font-size: 16px;
-}
-
-.consultation-date {
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.record-notes {
-  font-size: 14px;
-  color: #333;
-  white-space: pre-wrap;
-  margin-bottom: 8px;
-}
-
-.record-keywords {
-  font-size: 13px;
-  margin-top: 5px;
-  color: #6c757d;
-}
-
-.keyword-label {
-  font-weight: bold;
-}
-
-.keyword-value {
-  color: #007bff;
-  font-style: italic;
-}
-
-.no-record-found {
-  text-align: center;
-  padding: 20px;
-  color: #6c757d;
-  background-color: #e9ecef;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 600px) {
-  .search-form-group {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .search-input,
-  .btn-search {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .record-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .consultation-date {
-    margin-top: 5px;
-  }
-}
-/* CounselingRecordForm.css */
-
-.record-form-container {
-  padding: 30px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  max-width: 800px;
-  margin: 30px auto; /* 중앙 정렬 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-  font-size: 26px;
-  color: #333;
-  margin-bottom: 25px;
-  border-bottom: 3px solid #4caf50; /* 버튼 색상과 통일 */
-  padding-bottom: 5px;
-}
-
-/* 폼 그룹 */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 8px; /* 인라인 스타일 5px 대신 8px 적용 */
-  font-weight: bold; /* 인라인 스타일 유지 */
-  color: #555;
-  font-size: 15px;
-}
-
-/* 텍스트 입력 필드 및 텍스트 영역 */
-.form-textarea,
-.form-input {
-  width: 100%; /* 인라인 스타일 유지 */
-  padding: 12px;
-  box-sizing: border-box; /* 인라인 스타일 유지 */
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-textarea:focus,
-.form-input:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-  outline: none;
-}
-
-/* 텍스트 영역 높이 */
-.form-textarea {
-  resize: vertical; /* 수직 크기 조정만 허용 */
-}
-
-/* 저장 버튼 */
-.btn-save-record {
-  padding: 12px 25px; /* 인라인 스타일보다 약간 크게 조정 */
-  background: #4caf50; /* 녹색 (인라인 스타일 유지) */
-  color: white; /* 인라인 스타일 유지 */
-  border: none;
-  border-radius: 6px; /* 인라인 스타일 5px 대신 6px 적용 */
-  cursor: pointer; /* 인라인 스타일 유지 */
-  font-size: 16px;
-  font-weight: bold;
-  transition: background 0.2s;
-  width: 100%; /* 너비 100% */
-}
-
-.btn-save-record:hover:not(:disabled) {
-  background: #45a049;
-}
-
-.btn-save-record:disabled {
-  background: #cccccc;
-  cursor: not-allowed;
-}
-/* SchedulePage.css */
-
-/* --- 공통 요소 스타일 --- */
-
-/* 페이지 컨테이너 */
-.schedule-page-container,
-.counseling-record-view,
-.counseling-detail-page,
-.record-form-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.view-title,
-.form-title,
-.detail-page-title,
-.appointment-list-title {
-  color: #333;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.divider {
-  border: none;
-  height: 1px;
-  background-color: #eee;
-  margin: 20px 0;
-}
-
-.loading-text,
-.info-message,
-.error-message {
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.loading-text {
-  background-color: #eaf6ff;
-  color: #007bff;
-}
-.info-message {
-  background-color: #fff3cd;
-  color: #856404;
-}
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-/* --- 버튼 및 입력 필드 스타일 --- */
-
-.btn-primary,
-.btn-secondary,
-.btn-danger,
-.btn-start-video,
-.btn-edit-record,
-.btn-search,
-.btn-submit-availability,
-.btn-time-slot {
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin: 5px;
-  transition: background-color 0.2s, border-color 0.2s;
-  font-weight: 500;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: 1px solid #007bff;
-}
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  border: 1px solid #6c757d;
-}
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: 1px solid #dc3545;
-}
-.btn-danger:hover {
-  background-color: #bd2130;
-}
-
-.btn-start-video {
-  background-color: #28a745;
-  color: white;
-  border: 1px solid #28a745;
-}
-.btn-start-video:hover {
-  background-color: #1e7e34;
-}
-
-.btn-edit-record {
-  background-color: #ffc107;
-  color: #333;
-  border: 1px solid #ffc107;
-}
-.btn-edit-record:hover {
-  background-color: #e0a800;
-}
-
-.btn-search {
-  background-color: #007bff;
-  color: white;
-  border: 1px solid #007bff;
-}
-.btn-search:hover {
-  background-color: #0056b3;
-}
-
-.form-input,
-.form-textarea,
-.search-input,
-.custom-datepicker-input,
-select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0 15px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.form-label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 5px;
-}
-
-/* --- 상담 상세 및 기록 스타일 --- */
-
-.schedule-info-group,
-.action-buttons-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.schedule-info-item {
-  padding: 10px 0;
-}
-
-.info-label {
-  font-weight: bold;
-  color: #555;
-  margin-right: 10px;
-}
-
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-}
-.status-pending,
-.status-requested {
-  background-color: #ffc107;
-  color: #333;
-}
-.status-confirmed,
-.status-available {
-  background-color: #28a745;
-  color: white;
-}
-.status-canceled,
-.status-completed {
-  background-color: #6c757d;
-  color: white;
-}
-
-.counseling-notes-box {
-  border: 1px solid #ddd;
-  background-color: #fff;
-  padding: 15px;
-  min-height: 100px;
-  white-space: pre-wrap;
-  border-radius: 4px;
-  margin-bottom: 15px;
-}
-
-.record-keywords .keywords-value {
-  color: #007bff;
-  font-style: italic;
-}
-
-/* --- 상담 기록 조회 스타일 --- */
-
-.record-list {
-  list-style: none;
-  padding: 0;
-}
-
-.record-item {
-  border: 1px solid #ddd;
-  background-color: #fff;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-}
-
-.record-header {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-  margin-bottom: 10px;
-}
-
-.student-name {
-  font-size: 16px;
-  font-weight: bold;
-  color: #007bff;
-}
-
-.consultation-date {
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.record-notes {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.keyword-label {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.keyword-value {
-  color: #28a745;
-  font-style: italic;
-}
-
-.search-form-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  flex-grow: 1;
-}
-
-/* ------------------------------------------- */
-/* --- ⭐️ 기깔나게 바뀐 DatePicker/Calendar 스타일 --- */
-/* ------------------------------------------- */
-
-.calendar-group {
+/* 달력 컨테이너 */
+.datepicker-wrapper {
   display: flex;
   justify-content: center;
   margin: 30px 0;
-  background-color: #fff;
+  padding: 0 10px;
 }
 
+/* 달력 전체 카드 느낌 */
 .react-datepicker {
-  /* 기존 border 제거 및 폰트 개선 */
-  border: none !important;
-  border-radius: 12px;
-  padding: 15px;
-  font-family: "Pretendard", -apple-system, sans-serif;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* 더 부드러운 그림자 */
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 450px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 헤더 스타일 */
+.react-datepicker__header {
+  background-color: #f0f4f8;
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 14px 0;
+  color: #333;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* 요일 표시 */
+.react-datepicker__day-name {
+  color: #555;
+  font-weight: 600;
+  font-size: 1rem;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+}
+
+/* 일반 날짜 버튼 */
+.react-datepicker__day {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  margin: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* 오늘 날짜 */
+.react-datepicker__day--today {
+  border: 3px solid #ff6f61;
+  font-weight: 700;
+  color: #4a90e2;
+}
+
+/* 선택된 날짜 */
+.react-datepicker__day--selected {
+  background-color: #e65a4f;
+  color: #fff;
+  font-weight: 700;
   font-size: 1.2rem;
 }
 
-/* 캘린더 헤더 (2025.12 > 부분) */
-.react-datepicker__header {
-  background-color: white !important;
-  border-bottom: none !important;
-  padding-top: 20px;
+/* 선택된 날짜에 hover했을 때 */
+.react-datepicker__day--selected:hover {
+  background-color: #ff4f3f !important;
+  color: #fff !important;
+  transform: scale(1.1);
 }
 
-/* 년.월 제목 스타일 */
-.react-datepicker__current-month {
-  font-size: 1.6rem !important;
-  font-weight: 800 !important;
-  margin-bottom: 15px;
-  letter-spacing: -1px;
-  color: #222;
-}
-
-/* 요일 구분선 및 스타일 */
-.react-datepicker__day-names {
-  margin-top: 10px;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 15px;
-}
-
-.react-datepicker__day-name {
-  width: 4rem !important; /* 이미지처럼 넓게 */
-  line-height: 2.5rem !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  color: #888 !important;
-}
-
-/* 일요일 빨간색 포인트 */
-.react-datepicker__day-name:first-child {
-  color: #ff4d4f !important;
-}
-
-/* 날짜 숫자 셀 스타일 */
-.react-datepicker__day {
-  width: 4rem !important; /* 이미지처럼 넓게 */
-  line-height: 4rem !important; /* 높이도 맞춰서 시원하게 */
-  margin: 0.2rem !important;
-  font-size: 1.2rem !important;
-  border-radius: 12px !important; /* 둥근 네모 형태 */
-  transition: all 0.2s ease;
-  color: #333;
-}
-
-/* 오늘 날짜 (초록색 포인트) */
-.react-datepicker__day--today {
-  font-weight: 800 !important;
-  background-color: #ebfff1 !important;
-  color: #1ed760 !important;
-}
-
-/* 선택된 날짜 (이미지 스타일 반영) */
-.react-datepicker__day--selected {
-  background-color: #1ed760 !important; /* 기깔나는 초록색 */
-  color: white !important;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(30, 215, 96, 0.3);
-}
-
-/* 마우스 호버 효과 */
-.react-datepicker__day:hover:not(.react-datepicker__day--selected) {
-  background-color: #f5f5f5 !important;
-}
-
-/* 과거 날짜 등 비활성화 */
+/* 비활성화 날짜 */
 .react-datepicker__day--disabled {
-  color: #ddd !important;
-}
-
-/* ------------------------------------------- */
-/* --- 기존 시간 슬롯 버튼 목록 (유지) --- */
-/* ------------------------------------------- */
-
-.time-slots-container {
-  margin-top: 30px;
-}
-
-.time-slots-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-start;
-}
-
-/* 🚨 [기존] 교수 관리 페이지 컨테이너 스타일 */
-.professor-time-manager-container {
-  padding: 20px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fff;
-  margin-bottom: 30px;
-}
-
-/* 🚨 [기존] 시간 슬롯 버튼 (공통) */
-.btn-time-slot {
-  padding: 12px 18px;
-  margin: 0;
-  border: 1px solid #ddd;
-  border-radius: 8px; /* 조금 더 부드럽게 수정 */
-  cursor: pointer;
-  font-size: 1.05rem; /* 가독성 위해 약간 확대 */
-  transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 110px;
-  background-color: #fff;
-}
-
-/* 🚨 [기존] 교수 관리 상태에 따른 스타일 */
-.btn-time-slot.available {
-  background-color: #e6ffe6;
-  border-color: #4caf50;
-  color: #333;
-}
-
-.btn-time-slot.closed,
-.btn-time-slot.not_registered {
-  background-color: #f8f8f8;
-  border-color: #ccc;
-  color: #999;
-}
-
-.btn-time-slot.booked {
-  background-color: #ffdddd;
-  border-color: #f44336;
-  color: #333;
+  color: #ccc;
   cursor: not-allowed;
 }
 
-/* 학생 예약 페이지 전용 버튼 (Checked 상태 등) */
-.btn-time-slot:hover:not(.booked) {
-  border-color: #1ed760;
-  color: #1ed760;
-  transform: translateY(-2px);
+/* 캘린더 팝업 그림자 */
+.react-datepicker-popper {
+  z-index: 1000;
+}
+/* 화살표 버튼 크기 키우기 */
+.react-datepicker__navigation {
+  top: 25px; /* 화면 작을 때 위치 약간 조정 */
+  width: 25px;
+  height: 25px;
+  background: none !important; /* 배경 없앰 */
+  border: none !important; /* 테두리 없앰 */
+  color: #333;
 }
 
-.slot-action-label {
-  font-size: 10px;
-  margin-top: 2px;
-  font-weight: normal;
+.react-datepicker__navigation--previous::before,
+.react-datepicker__navigation--next::before {
+  border-width: 0.4rem; /* 화살표 크기 키움 */
+  border-color: #333;
+  background-color: none !important;
+}
+
+.react-datepicker__navigation--previous {
+  left: 15px;
+}
+
+.react-datepicker__navigation--next {
+  right: 10px;
+}
+/* 달력 시간 버튼 색 초기화 */
+.time-slots-list button {
+  all: unset !important; /* 모든 스타일 초기화 */
+  cursor: pointer !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  background-color: #f0f0f0 !important; /* 원하는 배경색 */
+  color: #333 !important; /* 원하는 글자색 */
+  border: 1px solid #ccc !important;
+  text-align: center !important;
+}
+
+.time-slots-list button:hover {
+  background-color: #ddd !important; /* 호버 효과 */
+}
+.time-slots-list {
+  display: flex !important;
+  flex-wrap: wrap !important; /* 여러 줄로 자동 줄바꿈 */
+  justify-content: center !important; /* 가로 가운데 정렬 */
+  gap: 8px !important; /* 버튼 간격 */
+  margin-top: 20px !important;
+}
+
+/* 시간 슬롯 버튼 공통 */
+.time-slots-list > button.slot-button {
+  cursor: pointer !important;
+  padding: 10px 15px !important;
+  border-radius: 8px !important;
+  border: 1px solid #ddd !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  margin: 6px 4px !important;
+  min-width: 50px !important;
+  transition: all 0.2s !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #fff !important;
+  color: #333 !important;
+}
+
+/* 상태별 색상 */
+.time-slots-list > button.slot-button.available {
+  border-color: #4caf50 !important;
+  color: #4caf50 !important;
+}
+
+.time-slots-list > button.slot-button.available:hover {
+  background-color: #4caf50 !important;
+  color: #fff !important;
+}
+
+.time-slots-list > button.slot-button.booked {
+  border-color: #9e9e9e !important;
+  color: #9e9e9e !important;
+  cursor: not-allowed !important;
+  background-color: #f9f9f9 !important;
+}
+
+.time-slots-list > button.slot-button.closed,
+.time-slots-list > button.slot-button.not-registered {
+  border-color: #ddd !important;
+  color: #aaa !important;
+  background-color: #f9f9f9 !important;
+}
+
+/* 상태 텍스트 */
+.time-slots-list > button.slot-button span {
+  font-size: 0.75rem !important;
+  margin-top: 2px !important;
+}
+
+/* 호버 효과 */
+.time-slots-list
+  > button.slot-button:not(.booked):not(.closed):not(.not-registered):hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .time-slots-list > button.slot-button {
+    padding: 8px 12px !important;
+    min-width: 70px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .time-slots-list > button.slot-button {
+    padding: 8px 12px;
+    min-width: 70px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .slot-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    min-width: 50px;
+  }
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+  .slot-button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: 60px;
+  }
+}
+
+@media (max-width: 360px) {
+  .slot-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    min-width: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .react-datepicker__day-name,
+  .react-datepicker__day {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 0.85rem;
+  }
+
+  .time-slots-list button {
+    padding: 5px 10px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .react-datepicker__day-name,
+  .react-datepicker__day {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 0.75rem;
+  }
+
+  .time-slots-list button {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+  }
+}
+@media (max-width: 900px) {
+  .react-datepicker {
+    max-width: 380px;
+    padding: 18px;
+  }
+  .react-datepicker__day-name,
+  .react-datepicker__day {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 0.95rem;
+  }
+}
+
+/* 태블릿용 */
+@media (max-width: 720px) {
+  .react-datepicker {
+    max-width: 320px;
+    padding: 16px;
+  }
+  .react-datepicker__day-name,
+  .react-datepicker__day {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 0.85rem;
+  }
 }

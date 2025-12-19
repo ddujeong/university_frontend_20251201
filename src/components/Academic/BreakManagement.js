@@ -16,7 +16,6 @@ const BreakManagement = ({ role }) => {
     try {
       const res = await api.get("/break/list");
       setLeaveRequests(res.data);
-      console.log(res.data);
     } catch (err) {
       console.error(err);
       showModal({

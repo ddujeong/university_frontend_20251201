@@ -3,10 +3,10 @@ import { useLocation } from "react-router-dom";
 
 import SectionLayout from "../components/Layout/SectionLayout";
 
-import NoticePage from "./NoticePage";
-import AcademicCalendar from "../components/Schedule/AcademicCalendar";
-import ScheduleManagerPage from "./ScheduleManagerPage";
+import NoticePage from "../components/Notice-sch/NoticePage";
 import "./AcademicPage.css";
+import ScheduleManagerPage from "../components/Notice-sch/ScheduleManagerPage";
+import AcademicCalendar from "../components/Notice-sch/AcademicCalendar";
 
 const AcademicPage = ({ role }) => {
   const location = useLocation();
