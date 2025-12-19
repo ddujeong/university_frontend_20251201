@@ -54,10 +54,13 @@ const Header = ({ user, logout, role }) => {
         <div className="main-header">
           <div className="logo">
             <Link to="/">
-             <img 
-                src="/logo.png" 
-                alt="NURI UNIVERSITY" 
-                style={{ height: "170px", objectFit: "contain" }} /* 크기 조절 예시 */
+              <img
+                src="/logo.png"
+                alt="NURI UNIVERSITY"
+                style={{
+                  height: "80px",
+                  objectFit: "contain",
+                }} /* 크기 조절 예시 */
               />
             </Link>
           </div>
