@@ -42,7 +42,7 @@ const ScheduleList = ({ onSelect, onActionComplete }) => {
                 {s.startDay?.substring(5)}~{s.endDay?.substring(5)}
               </td>
 
-              <td>{s.information}</td>
+              <td className="notice-page__title-cell">{s.information}</td>
             </tr>
           ))}
         </tbody>

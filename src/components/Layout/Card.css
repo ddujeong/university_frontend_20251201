@@ -70,6 +70,28 @@
 .section-card button:hover {
   background-color: #e65a4f;
 }
+/* 공지사항 제목 클릭 시 포인터 */
+.notice-page__title-cell {
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.notice-page__title-cell:hover {
+  color: #ff6f61;
+}
+
+/* 검색 버튼, 새 글 등록 버튼 */
+.search-btn {
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.search-btn:hover {
+  background-color: #ff6f61;
+  color: #fff;
+  transform: translateY(-1px);
+}
 
 /* 반응형 */
 @media (max-width: 768px) {

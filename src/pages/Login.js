@@ -130,7 +130,13 @@ const LoginPage = ({ setUser, setRole }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>로그인</h2>
+        <img
+          src="/logo.png"
+          style={{
+            height: "100px",
+            objectFit: "contain",
+          }}
+        />
 
         <form className="login-form" onSubmit={handleLoginSubmit}>
           <div className="input-group">
