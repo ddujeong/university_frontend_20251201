@@ -40,6 +40,14 @@
 .footer-right {
   text-align: right;
 }
+.footer-right a {
+  color: #ff6f61;
+  text-decoration: none;
+}
+
+.footer-right a:hover {
+  text-decoration: underline;
+}
 
 /* 반응형 */
 @media (max-width: 900px) {

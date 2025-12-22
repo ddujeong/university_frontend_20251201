@@ -109,19 +109,17 @@ const NotificationBell = ({ user, openChatbot }) => {
           const senderName = noti.senderName
             ? noti.senderName + " 교수님"
             : "교수님";
-
-          const isConfirmed = window.confirm(
-            `${senderName}이(가) 보낸 알림입니다.\n상담 페이지로 이동하시겠습니까?`
-          );
-
-          if (!isConfirmed) {
-            return; // '아니오'를 누르면 여기서 함수 종료
-          }
+          showModal({
+            type: "confirm",
+            message: `${senderName}이(가) 보낸 알림입니다.\n상담 페이지로 이동하시겠습니까?`,
+            onConfirm: async () => {
+              navigate(noti.url);
+              setIsOpen(false);
+            },
+          });
         }
-
         // 페이지 이동 실행
-        navigate(noti.url);
-        setIsOpen(false); // 창 닫기
+        // 창 닫기
       } else {
         // console.warn("⚠️ 이동할 URL이 없습니다. (DB에 url 컬럼이 비어있음)");
         // showModal({

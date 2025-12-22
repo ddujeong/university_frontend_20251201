@@ -7,7 +7,9 @@
   background-color: #f5f5f5;
   padding: 20px;
 }
-
+.login-card h2 {
+  text-align: center;
+}
 /* 카드형 박스 */
 .login-card {
   width: 350px; /* 카드 고정 폭 */
@@ -74,9 +76,15 @@
   margin-top: 10px;
   transition: 0.2s;
 }
-
 .login-btn:hover {
   background-color: #ff4a3d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.input-group input:focus {
+  border-color: #ff6f61;
+  box-shadow: 0 0 6px rgba(255, 111, 97, 0.3);
 }
 
 /* 하단 링크 */
