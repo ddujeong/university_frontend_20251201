@@ -34,7 +34,7 @@ const NotificationBell = ({ user, openChatbot }) => {
     const token = localStorage.getItem("token"); // 또는 쿠키 등 토큰 저장 위치
     const eventSource = new EventSourcePolyfill(
       //"http://localhost:8888/api/notification/subscribe", // 백엔드 주소 확인
-      `${BASE_URL}/api/notification/subscribe`, // ★ AWS 배포할때
+      `${BASE_URL}/notification/subscribe`, // ★ AWS 배포할때
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -86,6 +86,7 @@ const NotificationBell = ({ user, openChatbot }) => {
 
   // 3. 알림 클릭 처리
   const handleClick = async (noti) => {
+    console.log("클릭된 데이터 확인:", noti);
     try {
       // 읽음 처리 (API 호출) / 백엔드 isread 변경
       if (!noti.Checked) {

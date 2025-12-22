@@ -334,6 +334,10 @@ $(document).ready(function () {
                         );
                         return;
                       }
+                      if (msg["error"] === "화면이 공유되지않습니다.") {
+                        Janus.warn("사용자 알림 제외 처리: " + msg["error"]);
+                        return; // 팝업을 띄우지 않고 함수 종료
+                      }
                       bootbox.alert(msg["error"]);
                     }
                   }
