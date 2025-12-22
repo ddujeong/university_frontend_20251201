@@ -118,15 +118,13 @@ const NotificationBell = ({ user, openChatbot }) => {
               setIsOpen(false);
             },
           });
+
+          // 페이지 이동 실행
+          // 창 닫기
+        } else {
+          navigate(noti.url);
+          setIsOpen(false);
         }
-        // 페이지 이동 실행
-        // 창 닫기
-      } else {
-        // console.warn("⚠️ 이동할 URL이 없습니다. (DB에 url 컬럼이 비어있음)");
-        // showModal({
-        //   type: "alert",
-        //   message: "이동할 링크가 없는 알림입니다.",
-        // });
       }
     } catch (err) {
       showModal({

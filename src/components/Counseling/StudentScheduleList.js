@@ -108,9 +108,8 @@ const StudentScheduleList = ({ studentId, onSelect, listRefreshKey }) => {
               const isExpired = now > endTime;
 
               const canEnter =
-                !isExpired &&
-                ((s.status === "예약 완료" && now >= startTime) ||
-                  s.status === "상담 진행중");
+                (s.status === "예약 완료" && now >= startTime) ||
+                s.status === "상담 진행중";
 
               const canCancel =
                 !isExpired &&

@@ -147,6 +147,7 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
                 startTime: getLocalDateTimeString(slot.startTime),
                 endTime: getLocalDateTimeString(slot.endTime),
               });
+              await fetchSlots();
               showModal({
                 type: "alert",
                 message: "상담 가능 시간이 등록되었습니다.",
@@ -156,6 +157,8 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
                 type: "alert",
                 message: err.message || "등록에 실패했습니다.",
               });
+            } finally {
+              setLoading(false); // ✅ 모달 안에서 완료 시 로딩 false
             }
           },
         });
@@ -168,6 +171,7 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
           onConfirm: async () => {
             try {
               await closeAvailability(slot.id);
+              await fetchSlots();
               showModal({
                 type: "alert",
                 message: "상담 시간을 닫았습니다.",
@@ -177,6 +181,8 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
                 type: "alert",
                 message: err.message || "등록에 실패했습니다.",
               });
+            } finally {
+              setLoading(false); // ✅ 모달 안에서 완료 시 로딩 false
             }
           },
         });
@@ -187,8 +193,6 @@ const ProfessorAvailabilityManager = ({ professorId }) => {
         });
         return;
       }
-      // 갱신된 목록 다시 불러오기
-      await fetchSlots();
     } catch (e) {
       showModal({
         type: "alert",
