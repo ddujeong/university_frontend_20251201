@@ -1,5 +1,11 @@
 import "./App.css";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import AcademicPage from "./pages/AcademicPage";
 import Academic from "./pages/Academic";
@@ -23,6 +29,9 @@ function App() {
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
+  const location = useLocation(); // ← 최상단에서 호출
+  const tabFromQuery = new URLSearchParams(location.search).get("tab");
+
   const navigate = useNavigate();
   const logout = () => {
     localStorage.removeItem("token");
@@ -115,7 +124,11 @@ function App() {
               path="/counseling"
               element={
                 <ProtectedRoute user={user} role={role}>
-                  <CounselingPage user={user} role={role} />
+                  <CounselingPage
+                    user={user}
+                    role={role}
+                    initialTab={tabFromQuery}
+                  />
                 </ProtectedRoute>
               }
             />

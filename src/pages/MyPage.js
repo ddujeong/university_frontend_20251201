@@ -8,9 +8,12 @@ import BreakApp from "../components/MyPage/BreakApp";
 import BreakHistory from "../components/MyPage/BreakHistory";
 import TuitionNotice from "../components/MyPage/TuitionNotice";
 import TuitionHistory from "../components/MyPage/TuitionHistory";
+import { useLocation } from "react-router-dom";
 
 const MyPage = ({ user, role }) => {
-  const [activeTab, setActiveTab] = useState("myInfo");
+  const location = useLocation();
+  const tabFromQuery = new URLSearchParams(location.search).get("tab");
+  const [activeTab, setActiveTab] = useState(tabFromQuery || "myInfo");
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
@@ -20,8 +23,12 @@ const MyPage = ({ user, role }) => {
   }, [user]);
 
   useEffect(() => {
-    setActiveTab("myInfo");
-  }, [role]);
+    // user가 바뀌거나 로그인 상태 초기화 시 탭 초기화
+    // 단, URL 쿼리가 있으면 그대로 사용
+    if (!tabFromQuery) {
+      setActiveTab("myInfo");
+    }
+  }, [user, tabFromQuery]);
 
   if (!user) return <div>로그인 정보를 불러오는 중...</div>;
 
