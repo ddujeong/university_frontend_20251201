@@ -6,7 +6,6 @@ import "./Chatbot.css";
 import { useModal } from "../ModalContext";
 
 const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
-  // const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const studentId = user.id;
@@ -16,7 +15,6 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
     try {
       await chatApi.clearHistory(studentId);
       setMessages([]);
-      // setIsOpen(false);
       initialSentRef.current = false;
       onClose();
       showModal({
@@ -95,7 +93,6 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
     }
   };
 
-  // 새 메시지가 생길 때마다 스크롤 아래로
   useEffect(() => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
@@ -132,12 +129,6 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
 
   return (
     <div>
-      {/* {!isOpen && (
-        <button className="chat-btn" onClick={() => setIsOpen(true)}>
-          챗봇🤖
-        </button>
-      )} */}
-
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">
@@ -156,17 +147,12 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
               >
                 🗑️ 종료
               </button>
-              {/* <button onClick={() => setIsOpen(false)}>X</button> */}
             </div>
           </div>
 
           <div className="chat-body" ref={chatBodyRef}>
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`message ${msg.sender}`}
-                
-              >
+              <div key={idx} className={`message ${msg.sender}`}>
                 {msg.sender === "ai" ? (
                   <ReactMarkdown components={MarkdownComponents}>
                     {msg.text}

@@ -58,7 +58,20 @@ const CourseForm = ({
         <label>학과 ID</label>
         <input name="deptId" value={form.deptId} onChange={handleChange} />
       </div>
-
+      <div className="form-field">
+        <label>대상 학년</label>
+        <select
+          name="targetGrade"
+          value={form.targetGrade}
+          onChange={handleChange}
+        >
+          <option value="0">공통 (전학년)</option>
+          <option value="1">1학년</option>
+          <option value="2">2학년</option>
+          <option value="3">3학년</option>
+          <option value="4">4학년</option>
+        </select>
+      </div>
       <div className="form-field">
         <label>구분</label>
         <select name="type" value={form.type} onChange={handleChange}>
@@ -158,6 +171,7 @@ const Course = () => {
     endTime: "",
     grades: "",
     capacity: "",
+    targetGrade: 0,
   });
 
   useEffect(() => {
@@ -182,7 +196,6 @@ const Course = () => {
       showModal({ type: "alert", message: "강의 목록 조회 실패" });
     }
   };
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -202,6 +215,7 @@ const Course = () => {
       endTime: "",
       grades: "",
       capacity: "",
+      targetGrade: 0,
     });
   };
 
@@ -233,8 +247,30 @@ const Course = () => {
       type: "confirm",
       message: `${name} 강의를 삭제하시겠습니까?`,
       onConfirm: async () => {
-        await api.delete(`/admin/subject/${id}`);
-        getSubjects();
+        try {
+          // 1. 삭제 요청
+          await api.delete(`/admin/subject/${id}`);
+
+          // 2. 성공 알림
+          showModal({
+            type: "alert",
+            message: "성공적으로 삭제되었습니다.",
+          });
+
+          // 3. 목록 새로고침
+          getSubjects();
+        } catch (err) {
+          // 4. 백엔드(GlobalExceptionHandler)에서 보낸 메시지 추출
+          const serverMessage =
+            err.response?.data?.message ||
+            "삭제 중 알 수 없는 에러가 발생했습니다.";
+
+          // 5. 실패 이유를 사용자에게 알림 (예: "수강생이 3명 존재하여 삭제 불가")
+          showModal({
+            type: "alert",
+            message: serverMessage,
+          });
+        }
       },
     });
   };
@@ -294,6 +330,7 @@ const Course = () => {
               <th>교수</th>
               <th>강의실</th>
               <th>학과</th>
+              <th>학년</th>
               <th>구분</th>
               <th>연도</th>
               <th>학기</th>
@@ -312,6 +349,7 @@ const Course = () => {
                 <td>{s.professorId}</td>
                 <td>{s.roomId}</td>
                 <td>{s.deptId}</td>
+                <td>{s.targetGrade === 0 ? "공통" : `${s.targetGrade}학년`}</td>
                 <td>{s.type}</td>
                 <td>{s.subYear}</td>
                 <td>{s.semester}</td>

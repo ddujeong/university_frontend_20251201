@@ -5,8 +5,8 @@ import Pagination from "../Layout/Pagination";
 
 const ProfessorList = () => {
   const [professors, setProfessors] = useState([]);
-  const [page, setPage] = useState(0); // 2. 현재 페이지 상태
-  const [totalPages, setTotalPages] = useState(0); // 3. 전체 페이지 상태
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchDept, setSearchDept] = useState("");
   const [searchId, setSearchId] = useState("");
   const { showModal } = useModal();
@@ -16,18 +16,16 @@ const ProfessorList = () => {
 
   const fetchProfessors = async () => {
     try {
-      const params = { page }; // 4. 페이지 번호 포함
+      const params = { page };
       if (searchDept) params.deptId = searchDept;
       if (searchId) params.professorId = searchId;
 
       const res = await api.get("/staff/list/professor", { params });
 
-      // PageResponse 구조에 맞춰 데이터 추출
       if (res.data.content) {
         setProfessors(res.data.content);
         setTotalPages(res.data.totalPages);
       } else {
-        // 단건 조회(사번 검색 등) 시 객체로 올 경우 대응
         const data = Array.isArray(res.data) ? res.data : [res.data];
         setProfessors(data);
         setTotalPages(1);
@@ -41,7 +39,6 @@ const ProfessorList = () => {
     }
   };
 
-  // 조회 버튼 클릭 시 0페이지부터 다시 조회
   const handleSearch = () => {
     setPage(0);
     fetchProfessors();

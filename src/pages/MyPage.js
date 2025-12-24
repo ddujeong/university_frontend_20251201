@@ -23,13 +23,10 @@ const MyPage = ({ user, role }) => {
   }, [user]);
 
   useEffect(() => {
-    // user가 바뀌거나 로그인 상태 초기화 시 탭 초기화
-    // 단, URL 쿼리가 있으면 그대로 사용
-    if (!tabFromQuery) {
-      setActiveTab("myInfo");
+    if (tabFromQuery) {
+      setActiveTab(tabFromQuery);
     }
-  }, [user, tabFromQuery]);
-
+  }, [tabFromQuery]);
   if (!user) return <div>로그인 정보를 불러오는 중...</div>;
 
   /* ===== 사이드바 UI ===== */

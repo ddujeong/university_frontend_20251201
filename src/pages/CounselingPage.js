@@ -72,7 +72,6 @@ const Counseling = ({ role, user }) => {
       ))}
     </ul>
   );
-  console.log(user);
   const handleSelectSchedule = (schedule) => {
     const now = new Date();
     const startTime = new Date(schedule.startTime);
