@@ -7,13 +7,16 @@ import ProfessorAvailabilityManager from "../components/Counseling/ProfessorAvai
 import ProfessorScheduleList from "../components/Counseling/ProfessorScheduleList";
 import CounselingDetailForProfessor from "../components/Counseling/CounselingDetailForProfessor";
 import { useModal } from "../components/ModalContext";
+import { useLocation } from "react-router-dom";
 
 const Counseling = ({ role, user }) => {
+  const location = useLocation(); // 최상단에서 Hooks 호출
+  const tabFromQuery = new URLSearchParams(location.search).get("tab");
   const menuItems =
     role === "professor"
       ? ["상담 예약 관리", "학생 상담 목록", "상담 기록 조회", "화상 상담"]
       : ["상담 예약", "상담 일정", "화상 상담"];
-  const [activeTab, setActiveTab] = useState(menuItems[0]);
+  const [activeTab, setActiveTab] = useState(tabFromQuery || menuItems[0]);
   const [selectedSchedule, setSelectedSchedule] = useState(null); // 일정 선택
   const [inRoom, setInRoom] = useState(false); // 화상 상담 여부
   const { showModal } = useModal();

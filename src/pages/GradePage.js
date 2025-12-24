@@ -8,9 +8,12 @@ import Modal from "../components/Modal";
 import api from "../api/axiosConfig";
 import { useModal } from "../components/ModalContext";
 import EvaluationForm from "../components/Grade/EvaluationForm";
+import { useLocation } from "react-router-dom";
 
 const GradePage = () => {
-  const [activeTab, setActiveTab] = useState("this"); // this | semester | total
+  const location = useLocation();
+  const queryTab = new URLSearchParams(location.search).get("tab");
+  const [activeTab, setActiveTab] = useState(queryTab || "this"); // 기본 this
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const { showModal } = useModal();
