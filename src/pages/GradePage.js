@@ -21,13 +21,27 @@ const GradePage = () => {
   const [year, setYear] = useState(2025);
   const [semester, setSemester] = useState(1);
   const [type, setType] = useState("");
+  const [availableYears, setAvailableYears] = useState([]);
 
   const menuItems = [
     { key: "this", label: "금학기 성적 조회" },
     { key: "semester", label: "학기별 성적 조회" },
     { key: "total", label: "누계 성적" },
   ];
-
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        const res = await api.get("/grade/available-years");
+        if (res.data && res.data.length > 0) {
+          setAvailableYears(res.data);
+          setYear(res.data[0]); // 가장 최근 연도를 기본값으로 설정
+        }
+      } catch (err) {
+        console.error("연도 목록 로딩 실패:", err);
+      }
+    };
+    fetchYears();
+  }, []);
   const openEvalModal = (grade) => {
     setSelectedEval(grade);
   };
@@ -42,9 +56,7 @@ const GradePage = () => {
       let res;
 
       if (activeTab === "this") {
-        res = await api.get("/grade/thisSemester", {
-          params: { year: 2025, semester: 1 },
-        });
+        res = await api.get("/grade/thisSemester");
       } else if (activeTab === "semester") {
         res = await api.get("/grade/semester", {
           params: { year, semester, type },
@@ -122,9 +134,15 @@ const GradePage = () => {
             <>
               <div className="department-form">
                 <select value={year} onChange={(e) => setYear(+e.target.value)}>
-                  <option value="2023">2023년</option>
-                  <option value="2024">2024년</option>
-                  <option value="2025">2025년</option>
+                  {availableYears.length > 0 ? (
+                    availableYears.map((y) => (
+                      <option key={y} value={y}>
+                        {y}년
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">기록 없음</option>
+                  )}
                 </select>
 
                 <select

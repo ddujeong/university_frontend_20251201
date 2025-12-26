@@ -13,11 +13,13 @@ const CourseListPage = () => {
     type: "",
     name: "",
     deptId: "",
+    targetGrade: "",
   });
   const [appliedFilters, setAppliedFilters] = useState({
     type: "",
     name: "",
     deptId: "",
+    targetGrade: "",
   });
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [showSyllabus, setShowSyllabus] = useState(false);
@@ -50,6 +52,7 @@ const CourseListPage = () => {
         type: appliedFilters.type,
         name: appliedFilters.name,
         deptId: appliedFilters.deptId,
+        targetGrade: appliedFilters.targetGrade,
       });
       setSubjects(res.data.content || []);
       setTotalPages(res.data.totalPages || 0);

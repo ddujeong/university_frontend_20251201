@@ -21,7 +21,7 @@ import GradePage from "./pages/GradePage";
 import CoursePage from "./pages/CoursePage";
 import SugangPage from "./pages/SugangPage";
 import MainLayout from "./components/Layout/MainLayout";
-import { ModalProvider } from "./components/ModalContext";
+import { ModalProvider, useModal } from "./components/ModalContext";
 import CounselingPage from "./pages/CounselingPage";
 
 function App() {
@@ -29,15 +29,15 @@ function App() {
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
-  const location = useLocation(); // ← 최상단에서 호출
+  const location = useLocation();
   const tabFromQuery = new URLSearchParams(location.search).get("tab");
 
   const navigate = useNavigate();
   const logout = () => {
     localStorage.removeItem("token");
-    setUser(null); // 즉시 로그아웃 상태로 전환
-    setRole(null); // ← role 초기화
-    navigate("/login");
+    setUser(null);
+    setRole(null);
+    navigate("/login", { state: { fromLogout: true } });
   };
   useEffect(() => {
     if (!token) {
@@ -52,10 +52,13 @@ function App() {
         setUser(res.data.user);
         setRole(res.data.role);
       })
-      .catch(() => {
+      .catch((err) => {
         setUser(null);
         setRole(null);
         localStorage.removeItem("token");
+        if (err.response?.status === 401) {
+          navigate("/login", { state: { fromExpired: true } });
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -63,114 +66,111 @@ function App() {
   }, [token]);
   if (loading) return <div>로딩중..</div>;
   return (
-    <ModalProvider>
-      {" "}
-      <div className="App">
-        <Routes>
+    <div className="App">
+      <Routes>
+        <Route
+          element={
+            <ProtectedRoute user={user} role={role}>
+              <MainLayout user={user} role={role} logout={logout} />
+            </ProtectedRoute>
+          }
+        >
+          {/* 홈 */}
           <Route
+            path="/"
             element={
-              <ProtectedRoute user={user} role={role}>
-                <MainLayout user={user} role={role} logout={logout} />
+              <ProtectedRoute user={user}>
+                <Home user={user} logout={logout} role={role} />
               </ProtectedRoute>
             }
-          >
-            {/* 홈 */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute user={user}>
-                  <Home user={user} logout={logout} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* MY */}
-            <Route
-              path="/My"
-              element={
-                <ProtectedRoute user={user} role={role}>
-                  <MyPage user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 학사관리  */}
-            <Route
-              path="/academic"
-              element={
-                <ProtectedRoute user={user} role={role} roleRequired="staff">
-                  <Academic user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 수업 */}
-            <Route
-              path="/course"
-              element={
-                <ProtectedRoute user={user} role={role}>
-                  <CoursePage user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 수강 */}
-            <Route
-              path="/sugang"
-              element={
-                <ProtectedRoute user={user} role={role} roleRequired="student">
-                  <SugangPage user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 상담 */}
-            <Route
-              path="/counseling"
-              element={
-                <ProtectedRoute user={user} role={role}>
-                  <CounselingPage
-                    user={user}
-                    role={role}
-                    initialTab={tabFromQuery}
-                  />
-                </ProtectedRoute>
-              }
-            />
-            {/* 등록 */}
-            <Route
-              path="/registration"
-              element={
-                <ProtectedRoute user={user} role={role} roleRequired="staff">
-                  <AcademicRegistration user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 학사정보 */}
-            <Route
-              path="/academicPage"
-              element={
-                <ProtectedRoute user={user} role={role}>
-                  <AcademicPage role={role} />
-                </ProtectedRoute>
-              }
-            />
-            {/* 없는 경로는 home으로 redirect */}
-            {/* 성적 */}
-            <Route
-              path="/grade"
-              element={
-                <ProtectedRoute user={user} role={role} roleRequired="student">
-                  <GradePage user={user} role={role} />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-          {/* 없는 경로 홈 이동 */}
-          <Route path="*" element={<Navigate to="/" />} />
-          {/* 로그인 */}
-          <Route
-            path="/login"
-            element={<Login setUser={setUser} setRole={setRole} />}
           />
-        </Routes>
-      </div>
-    </ModalProvider>
+          {/* MY */}
+          <Route
+            path="/My"
+            element={
+              <ProtectedRoute user={user} role={role}>
+                <MyPage user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 학사관리  */}
+          <Route
+            path="/academic"
+            element={
+              <ProtectedRoute user={user} role={role} roleRequired="staff">
+                <Academic user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 수업 */}
+          <Route
+            path="/course"
+            element={
+              <ProtectedRoute user={user} role={role}>
+                <CoursePage user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 수강 */}
+          <Route
+            path="/sugang"
+            element={
+              <ProtectedRoute user={user} role={role} roleRequired="student">
+                <SugangPage user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 상담 */}
+          <Route
+            path="/counseling"
+            element={
+              <ProtectedRoute user={user} role={role}>
+                <CounselingPage
+                  user={user}
+                  role={role}
+                  initialTab={tabFromQuery}
+                />
+              </ProtectedRoute>
+            }
+          />
+          {/* 등록 */}
+          <Route
+            path="/registration"
+            element={
+              <ProtectedRoute user={user} role={role} roleRequired="staff">
+                <AcademicRegistration user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 학사정보 */}
+          <Route
+            path="/academicPage"
+            element={
+              <ProtectedRoute user={user} role={role}>
+                <AcademicPage role={role} />
+              </ProtectedRoute>
+            }
+          />
+          {/* 없는 경로는 home으로 redirect */}
+          {/* 성적 */}
+          <Route
+            path="/grade"
+            element={
+              <ProtectedRoute user={user} role={role} roleRequired="student">
+                <GradePage user={user} role={role} />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+        {/* 없는 경로 홈 이동 */}
+        <Route path="*" element={<Navigate to="/" />} />
+        {/* 로그인 */}
+        <Route
+          path="/login"
+          element={<Login setUser={setUser} setRole={setRole} />}
+        />
+      </Routes>
+    </div>
   );
 }
 

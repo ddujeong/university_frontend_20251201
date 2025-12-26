@@ -4,7 +4,6 @@ import BreakAppModal from "../MyPage/BreakModal";
 import { useModal } from "../ModalContext";
 
 const BreakManagement = ({ role }) => {
-  // 예시 신청 내역
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const { showModal } = useModal();
@@ -79,7 +78,7 @@ const BreakManagement = ({ role }) => {
         onClose={() => setSelectedRequest(null)}
         handleUpdateStatus={handleUpdateStatus}
         role={role}
-        onDeleted={getLeaveList} // 취소 후 리스트 갱신
+        onDeleted={getLeaveList}
       />
     </>
   );

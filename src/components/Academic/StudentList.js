@@ -16,18 +16,16 @@ const StudentList = () => {
   }, [page]);
   const getList = async () => {
     try {
-      const params = { page }; // 4. 페이지 파라미터 추가
+      const params = { page };
       if (searchDept) params.deptId = searchDept;
       if (searchId) params.studentId = searchId;
 
       const res = await api.get("/staff/list/student", { params });
 
-      // 백엔드 PageResponse 구조에 맞춰 데이터 세팅
       if (res.data.content) {
         setStudents(res.data.content);
         setTotalPages(res.data.totalPages);
       } else {
-        // 단일 조회(studentId) 시 데이터가 객체로 올 경우 대비
         const singleData = Array.isArray(res.data) ? res.data : [res.data];
         setStudents(singleData);
         setTotalPages(1);
@@ -38,7 +36,6 @@ const StudentList = () => {
     }
   };
 
-  // 조회 버튼 클릭 시 0페이지부터 다시 검색
   const handleSearch = () => {
     setPage(0);
     getList();
@@ -46,12 +43,12 @@ const StudentList = () => {
   const handleUpdateGrades = async () => {
     setLoading(true);
     try {
-      await api.get("/staff/list/student/update"); // 스프링 컨트롤러 매핑
+      await api.get("/staff/list/student/update");
       showModal({
         type: "alert",
         message: "전체 학생 학기 업데이트를 완료하였습니다.",
       });
-      getList(); // 갱신 후 리스트 새로 조회
+      getList();
     } catch (err) {
       console.error(err);
       showModal({

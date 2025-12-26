@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
 import Modal from "../components/Modal"; // 모달 컴포넌트
 import api from "../api/axiosConfig";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useModal } from "../components/ModalContext";
 
 const LoginPage = ({ setUser, setRole }) => {
@@ -30,8 +30,22 @@ const LoginPage = ({ setUser, setRole }) => {
   const [saveId, setSaveId] = useState(() => {
     return localStorage.getItem("savedLoginId") ? true : false;
   });
-  // useModal() 훅
+  const location = useLocation();
   const { showModal } = useModal();
+
+  useEffect(() => {
+    if (location.state?.fromExpired) {
+      showModal({
+        type: "alert",
+        message: "세션이 만료되었습니다. 다시 로그인해주세요.",
+      });
+    }
+    if (location.state?.fromLogout) {
+      showModal({ type: "alert", message: "로그아웃 되셨습니다." });
+    }
+    // state 청소
+    window.history.replaceState({}, document.title);
+  }, [location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +58,7 @@ const LoginPage = ({ setUser, setRole }) => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-  // 아이디 찾기 처리
+
   const handleFindId = async () => {
     try {
       const response = await api.post("/user/findId", {
@@ -52,7 +66,7 @@ const LoginPage = ({ setUser, setRole }) => {
         email: modalData.email,
         userRole: modalData.role,
       });
-      setFoundId(response.data.id); // 모달 안에서 바로 보여주기
+      setFoundId(response.data.id);
     } catch (err) {
       showModal({
         type: "alert",
@@ -61,7 +75,6 @@ const LoginPage = ({ setUser, setRole }) => {
     }
   };
 
-  // 비밀번호 찾기 처리
   const handleFindPw = async () => {
     try {
       const response = await api.post("/user/findPw", {
