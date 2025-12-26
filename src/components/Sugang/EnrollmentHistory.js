@@ -126,7 +126,7 @@ const EnrollmentHistoryPage = ({ setPageHeader, setActiveTab }) => {
         {period !== 2 && (
           <button
             className="navigate-btn"
-            onClick={() => setActiveTab("수강 신청")}
+            onClick={() => setActiveTab("수강신청")}
           >
             {period === 0 ? "강의 담으러 가기" : "강의 목록 보러가기"}
           </button>
