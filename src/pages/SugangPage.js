@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import SectionLayout from "../components/Layout/SectionLayout";
 import CourseListPage from "../components/Sugang/CourseList";
 import EnrollmentHistoryPage from "../components/Sugang/EnrollmentHistory";
@@ -16,23 +16,22 @@ const Sugang = ({ role, user }) => {
     : ["강의시간표조회", "수강신청", "수강 신청 내역 조회"];
   const [activeTab, setActiveTab] = useState(queryTab || menuItems[0]);
   const [pageHeader, setPageHeader] = useState(activeTab);
-
   useEffect(() => {
     if (!queryTab) {
       setActiveTab(menuItems[0]);
     }
   }, [role, queryTab]);
   useEffect(() => {
-    if (isLeave) {
+    // 휴학 상태인데, 현재 활성화된 탭이 '강의시간표조회'가 아닌 경우에만 실행
+    if (isLeave && activeTab !== "강의시간표조회") {
       showModal({
         type: "alert",
-        message:
-          "김학생님은 현재 휴학 상태입니다. 휴학 중에는 수강 신청이 불가하며, 강의 시간표 조회만 가능합니다.",
+        message: `${user.name}님은 현재 휴학 상태입니다. 휴학 중에는 수강 신청이 불가하며, 강의 시간표 조회만 가능합니다.`,
       });
-      // 휴학생은 강제로 첫 번째 탭(강의시간표조회)으로 고정
+      // 알림을 띄운 후 탭을 강제로 이동
       setActiveTab("강의시간표조회");
     }
-  }, [isLeave]); // isLeave가 true일 때 한 번만 실행
+  }, [isLeave, activeTab, user?.name, showModal]);
   /* ===== Sidebar ===== */
   const sidebar = (
     <ul className="section-menu">
