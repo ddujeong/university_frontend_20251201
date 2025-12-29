@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { chatApi } from "../../api/aiApi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import "./Chatbot.css";
 import { useModal } from "../ModalContext";
@@ -12,24 +12,84 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
   const chatBodyRef = useRef(null);
   const [isTyping, setIsTyping] = useState(false);
   const { showModal } = useModal();
+
+  // ★ [추가 1] 스크롤 기능을 위한 Ref
+  const scrollRef = useRef(null);
+  const animationRef = useRef(null);
+
   const guides = [
     {
       label: "📊 내 성적/학점 분석",
-      query: "내 현재 성적과 총 이수 학점을 분석해서 요약해줘.",
+      query: "📊 내 성적/학점 분석",
     },
     {
       label: "📅 이번 학기 시간표",
-      query: "내가 이번 학기에 듣는 과목들이랑 일정 알려줘.",
+      query: "📅 이번 학기 시간표",
     },
     {
-      label: "📜 휴학/복학 신청",
-      query: "휴학 신청 방법이나 절차에 대해 알려줘.",
+      label: "📜 휴학 신청",
+      query: "📜 휴학 신청",
     },
     {
       label: "💬 교수님 상담 신청",
-      query: "우리 학과 교수님들 정보랑 상담 예약하는 법 알려줘.",
+      query: "💬 교수님 상담 신청",
     },
   ];
+
+  // ★ [추가 2] 스크롤 중지 함수
+  const stopScroll = () => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+  };
+
+  // ★ [추가 3] 마우스 감지 및 자동 스크롤 로직
+  const handleMouseMove = (e) => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const { left, width } = container.getBoundingClientRect();
+    const x = e.clientX - left; // 컨테이너 내부 X 좌표
+    const zoneSize = 60; // 감지 영역 (픽셀)
+    const speed = 5; // 스크롤 속도
+
+    // 이미 실행 중인 애니메이션이 있다면 취소 (새 방향 적용을 위해)
+    stopScroll();
+
+    if (x < zoneSize) {
+      // [왼쪽 영역 감지]
+      const scrollLeft = () => {
+        container.scrollLeft -= speed;
+        if (container.scrollLeft > 0) {
+          animationRef.current = requestAnimationFrame(scrollLeft);
+        }
+      };
+      scrollLeft();
+    } else if (x > width - zoneSize) {
+      // [오른쪽 영역 감지]
+      const scrollRight = () => {
+        container.scrollLeft += speed;
+        if (
+          container.scrollLeft <
+          container.scrollWidth - container.clientWidth
+        ) {
+          animationRef.current = requestAnimationFrame(scrollRight);
+        }
+      };
+      scrollRight();
+    }
+  };
+
+  // ★ [추가 4] 마우스가 나가면 스크롤 중지
+  const handleMouseLeave = () => {
+    stopScroll();
+  };
+
+  // ★ [추가 5] 컴포넌트 언마운트 시 애니메이션 정리
+  useEffect(() => {
+    return () => stopScroll();
+  }, []);
 
   const handleGuideClick = async (query) => {
     if (isTyping) return;
@@ -49,6 +109,7 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
       setIsTyping(false);
     }
   };
+
   const handleClear = async () => {
     try {
       await chatApi.clearHistory(studentId);
@@ -88,6 +149,7 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
       });
     }
   };
+
   const initialSentRef = useRef(false);
 
   useEffect(() => {
@@ -190,8 +252,15 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
               </button>
             </div>
           </div>
+
+          {/* ★ [수정] 가이드 영역에 핸들러 연결 */}
           <div className="guide-sticky-container">
-            <div className="guide-scroll-wrapper">
+            <div
+              className="guide-scroll-wrapper"
+              ref={scrollRef} // Ref 연결
+              onMouseMove={handleMouseMove} // 마우스 움직임 감지
+              onMouseLeave={handleMouseLeave} // 마우스 나감 감지
+            >
               {guides.map((guide, idx) => (
                 <button
                   key={idx}
@@ -206,7 +275,6 @@ const Chatbot = ({ user, isOpen, onClose, initialMessage }) => {
           </div>
 
           <div className="chat-body" ref={chatBodyRef}>
-            {/* 2. 대화 시작 전 환영 문구만 남기기 */}
             {messages.length === 0 && !isTyping && (
               <div className="welcome-message">
                 <span className="ai-icon">🤖</span>
