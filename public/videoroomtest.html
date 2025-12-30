@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.4.0/adapter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
@@ -20,41 +20,67 @@
   </head>
 
   <body>
-    <div class="container">
-      <div id="room-display" class="hide">
-        <strong>현재 방 번호:</strong>
-        <span id="room" class="room-info"></span>
+    <div class="app-container">
+      <nav class="top-nav">
+        <div class="room-tag">
+          <span class="dot pulse"></span>
+          ROOM: <span id="room">---</span>
+        </div>
+        <div class="logo">VIDEO ROOM</div>
+      </nav>
+
+      <div id="videojoin" class="setup-workspace">
+        <div id="videolocal-setup" class="video-box active"></div>
       </div>
 
-      <div id="videos" class="hide">
-        <div class="video-row">
-          <div class="video-col">
-            <div class="panel">
-              <div class="panel-heading">
-                <h3 class="panel-title">
-                  나
-                  <span class="label label-primary hide" id="publisher"></span>
-                </h3>
-              </div>
-              <div class="panel-body" id="videolocal"></div>
-            </div>
-          </div>
-
-          <div class="video-col">
-            <div class="panel">
-              <div class="panel-heading">
-                <h3 class="panel-title">
-                  상대방
-                  <span class="label label-info hide" id="remote1"></span>
-                </h3>
-              </div>
-              <div class="panel-body relative" id="videoremote1"></div>
-            </div>
+      <main id="videos" class="video-workspace hide">
+        <div class="video-box active">
+          <div id="videolocal" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge local">ME</span>
+            <span id="publisher" class="status-text hide">Live</span>
           </div>
         </div>
-      </div>
+        <div class="video-box">
+          <div id="videoremote1" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge remote">REMOTE</span>
+            <span id="remote1" class="status-text hide"></span>
+          </div>
+        </div>
 
-      <hr />
+        <div class="video-box">
+          <div id="videoremote2" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge remote">REMOTE</span>
+            <span id="remote2" class="status-text hide"></span>
+          </div>
+        </div>
+
+        <div class="video-box">
+          <div id="videoremote3" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge remote">REMOTE</span>
+            <span id="remote3" class="status-text hide"></span>
+          </div>
+        </div>
+
+        <div class="video-box">
+          <div id="videoremote4" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge remote">REMOTE</span>
+            <span id="remote4" class="status-text hide"></span>
+          </div>
+        </div>
+
+        <div class="video-box">
+          <div id="videoremote5" class="stream-container"></div>
+          <div class="overlay-info">
+            <span class="badge remote">REMOTE</span>
+            <span id="remote5" class="status-text hide"></span>
+          </div>
+        </div>
+      </main>
     </div>
   </body>
 </html>
