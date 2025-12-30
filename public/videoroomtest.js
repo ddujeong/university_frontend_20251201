@@ -31,7 +31,9 @@ function handlePublisherMessage(msg, jsep) {
       mypvtid = msg["private_id"];
       $("#videojoin").hide(); // 참여 UI 숨김
       $("#videos").removeClass("hide").show();
-      publishOwnFeed(true); // 내 화면 송출
+      setTimeout(function() {
+    publishOwnFeed(true);
+  }, 500);
 
       if (msg["publishers"]) {
         var list = msg["publishers"];
@@ -281,9 +283,9 @@ $(document).ready(function () {
         { urls: "stun:stun.l.google.com:19302" },
         {
           // 2. envVars에서 안전하게 꺼내 쓰기
-          urls: envVars.REACT_APP_TURN_URL || "",
-          username: envVars.REACT_APP_TURN_USERNAME || "",
-          credential: envVars.REACT_APP_TURN_PASSWORD || "",
+          urls: envVars.REACT_APP_TURN_URL || "turn:54.180.224.186:3478",
+username: envVars.REACT_APP_TURN_USERNAME || "myuser",
+credential: envVars.REACT_APP_TURN_PASSWORD || "mypassword",
         },
         {
           urls: (envVars.REACT_APP_TURN_URL || "") + "?transport=tcp",
@@ -341,6 +343,7 @@ function initJanusSession() {
 
 // --- [내 화면(Publisher) 로직] ---
 function publishOwnFeed(useAudio) {
+  console.log("현재 설정된 iceServers:", iceServers);
   if (isPublishing === true) {
     console.warn("이미 송출 프로세스가 진행 중입니다. 중복 호출을 차단합니다.");
     return;
@@ -362,13 +365,15 @@ function publishOwnFeed(useAudio) {
     error: function (error) {
       isPublishing = false;
       $btn.removeAttr("disabled").css("opacity", "1").html("화면 송출 시작");
+      console.error("WebRTC createOffer error:", error);
       if (useAudio) {
         publishOwnFeed(false);
       } else {
         Swal.fire({
           icon: "error",
           title: "송출 오류",
-          text: "카메라/마이크를 확인해주세요.",
+         text: "에러 내용: " + (error.message || JSON.stringify(error)),
+    footer: "카메라 권한이나 TURN 서버 설정을 확인해주세요."
         });
       }
     },
