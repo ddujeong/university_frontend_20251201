@@ -3,6 +3,7 @@ import api from "../../api/axiosConfig";
 import { courseApi } from "../../api/gradeApi";
 import { useModal } from "../ModalContext";
 import CoursePlanPage from "./CoursePlanPage";
+import Pagination from "../Layout/Pagination";
 
 const AllCourse = ({ role, user }) => {
   const [year, setYear] = useState("");
@@ -170,20 +171,7 @@ const AllCourse = ({ role, user }) => {
       </div>
 
       {/* 페이지네이션 */}
-      <div className="pagination">
-        <button disabled={page === 0} onClick={() => setPage(page - 1)}>
-          ◀ 이전
-        </button>
-        <span>
-          {page + 1} / {totalPages === 0 ? 1 : totalPages}
-        </span>
-        <button
-          disabled={page >= totalPages - 1}
-          onClick={() => setPage(page + 1)}
-        >
-          다음 ▶
-        </button>
-      </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       <CoursePlanPage
         role={role}
         user={user}

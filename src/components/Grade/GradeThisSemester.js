@@ -4,7 +4,6 @@ const GradeThisSemester = ({ data, onEvaluate }) => {
   if (!list.length) {
     return <div className="empty-row">이번 학기 성적이 없습니다.</div>;
   }
-  console.log(list);
   return (
     <>
       <div className="table-wrapper">

@@ -106,7 +106,7 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
         </p>
       </div>
 
-      <div className="form-row">
+      <div className="input-group">
         <label>결석</label>
         <input
           type="number"
@@ -120,7 +120,7 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
           </p>
         )}
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>지각</label>
         <input
           type="number"
@@ -129,7 +129,7 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>과제점수</label>
         <input
           type="number"
@@ -138,7 +138,7 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>중간시험</label>
         <input
           type="number"
@@ -147,7 +147,7 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>기말시험</label>
         <input
           type="number"
@@ -156,11 +156,11 @@ const ProfStudentGradeInput = ({ student, courseId, goBack }) => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>환산점수</label>
         <input type="number" name="total" value={form.total} readOnly />
       </div>
-      <div className="form-row">
+      <div className="input-group">
         <label>등급</label>
         <input type="text" name="grade" value={form.grade} readOnly />
       </div>

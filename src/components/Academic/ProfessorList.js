@@ -1,40 +1,35 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axiosConfig";
 import { useModal } from "../ModalContext";
+import Pagination from "../Layout/Pagination";
 
 const ProfessorList = () => {
   const [professors, setProfessors] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchDept, setSearchDept] = useState("");
   const [searchId, setSearchId] = useState("");
   const { showModal } = useModal();
   useEffect(() => {
-    getList();
-  }, []);
-  const getList = async () => {
+    fetchProfessors();
+  }, [page]);
+
+  const fetchProfessors = async () => {
     try {
-      const res = await api.get("/staff/list/professor");
-      const data =
-        res.data.content || (Array.isArray(res.data) ? res.data : [res.data]);
-      setProfessors(data);
-    } catch (err) {
-      console.error(err);
-      setProfessors([]);
-      showModal({
-        type: "alert",
-        message: "교수 목록을 불러오는데 실패했습니다.",
-      });
-    }
-  };
-  const getSerchList = async () => {
-    try {
-      const params = {};
+      const params = { page };
       if (searchDept) params.deptId = searchDept;
       if (searchId) params.professorId = searchId;
 
       const res = await api.get("/staff/list/professor", { params });
-      setProfessors(
-        res.data.content || (Array.isArray(res.data) ? res.data : [res.data])
-      ); // PageResponse 구조면 content 사용
+
+      if (res.data.content) {
+        setProfessors(res.data.content);
+        setTotalPages(res.data.totalPages);
+      } else {
+        const data = Array.isArray(res.data) ? res.data : [res.data];
+        setProfessors(data);
+        setTotalPages(1);
+      }
     } catch (err) {
       setProfessors([]);
       showModal({
@@ -43,28 +38,31 @@ const ProfessorList = () => {
       });
     }
   };
+
+  const handleSearch = () => {
+    setPage(0);
+    fetchProfessors();
+  };
   return (
     <>
       <h3>교수 명단 조회</h3>
-      <div className="filter-container">
-        <div className="form-row">
-          <input
-            type="text"
-            value={searchDept}
-            onChange={(e) => setSearchDept(e.target.value)}
-            placeholder="학과 번호"
-          />
+      <div className="department-form">
+        <input
+          type="text"
+          value={searchDept}
+          onChange={(e) => setSearchDept(e.target.value)}
+          placeholder="학과 번호"
+        />
 
-          <input
-            type="text"
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            placeholder="사번"
-          />
-          <button onClick={getSerchList} className="search-btn">
-            조회
-          </button>
-        </div>
+        <input
+          type="text"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          placeholder="사번"
+        />
+        <button onClick={handleSearch} className="search-btn">
+          조회
+        </button>
       </div>
       <div className="table-wrapper">
         <table className="course-table">
@@ -106,6 +104,7 @@ const ProfessorList = () => {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
 };

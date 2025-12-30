@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axiosConfig";
-import { useNavigate } from "react-router-dom";
 import CourseStudentList from "./CourseStudentList";
 import CoursePlanPage from "./CoursePlanPage";
 import { useModal } from "../ModalContext";
@@ -27,7 +26,6 @@ const ProfCourse = ({ role, user }) => {
 
       const res = await api.get("/prof", { params });
       setCourses(res.data);
-      console.log(res.data);
     } catch (err) {
       showModal({
         type: "alert",

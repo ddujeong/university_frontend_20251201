@@ -1,4 +1,3 @@
-import React from "react";
 import api from "../../api/axiosConfig";
 import "./BreakModal.css";
 import { useModal } from "../ModalContext";

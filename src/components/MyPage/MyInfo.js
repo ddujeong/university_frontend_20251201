@@ -10,7 +10,6 @@ const MyInfo = ({ user, userData, setUserData, role }) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
-  console.log(userData);
   const handleSave = async () => {
     try {
       const res = await api.put("/user/update", userData);
@@ -21,7 +20,6 @@ const MyInfo = ({ user, userData, setUserData, role }) => {
         message: "수정완료",
       });
     } catch (err) {
-      console.error(err);
       showModal({
         type: "alert",
         message: err.response?.data?.message || err.message,

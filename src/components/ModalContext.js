@@ -8,7 +8,7 @@ export const useModal = () => useContext(ModalContext);
 export const ModalProvider = ({ children }) => {
   const [modal, setModal] = useState({
     isOpen: false,
-    type: "alert", // alert | confirm
+    type: "alert",
     message: "",
     onConfirm: null,
     onCancel: null,

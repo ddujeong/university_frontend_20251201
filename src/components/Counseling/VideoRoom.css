@@ -1,0 +1,108 @@
+/* 기본 레이아웃: 데스크톱 & 태블릿 */
+.video-room-container {
+  display: flex;
+  flex-direction: column;
+  height: 95vh; /* 최대한 화면을 크게 사용 */
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.video-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* 헤더 높이 고정 */
+}
+
+.video-room-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* flex 자식이 넘치는 것 방지 */
+}
+
+/* 화상 영역: 기본적으로 크게 */
+.video-section {
+  flex: 2.5; /* 기록창보다 훨씬 크게 */
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.video-room-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* 하단 기록 영역 */
+.record-section-bottom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-top: 3px solid #007bff;
+  border-radius: 8px;
+  margin-top: 10px;
+  padding: 12px;
+  min-height: 150px; /* 최소 기록 공간 확보 */
+}
+
+.record-textarea-bottom {
+  flex: 1;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  resize: none;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* --- 반응형 처리 (모바일 / 작은 화면) --- */
+
+@media (max-width: 768px) {
+  .video-room-container {
+    height: 100vh; /* 모바일은 전체 화면 사용 */
+    padding: 5px;
+  }
+
+  .video-room-header h3 {
+    font-size: 1rem; /* 제목 크기 축소 */
+  }
+
+  .btn-finish {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* 모바일에서 기록창 비중 조절 */
+  .video-section {
+    flex: 1.5; /* 화상 영역을 조금 줄임 */
+  }
+
+  .record-section-bottom {
+    flex: 1;
+    min-height: 120px;
+    padding: 8px;
+  }
+
+  .record-textarea-bottom {
+    font-size: 0.9rem; /* 모바일 글자 크기 최적화 */
+  }
+}
+
+/* 아주 작은 가로 모드 대응 */
+@media (max-height: 500px) and (orientation: landscape) {
+  .video-room-content {
+    flex-direction: row; /* 가로가 너무 짧고 세로가 긴 경우 가로 배치로 전환 */
+  }
+  .record-section-bottom {
+    margin-top: 0;
+    margin-left: 10px;
+    flex: 1;
+  }
+}

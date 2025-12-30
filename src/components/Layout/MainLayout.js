@@ -9,7 +9,6 @@ const MainLayout = ({ user, role, logout }) => {
   const [chatbotMessage, setChatbotMessage] = useState(null);
 
   const openChatbot = (message) => {
-    console.log("🔥 openChatbot 호출됨:", message);
     if (role !== "student") return;
     setChatbotMessage(message || null);
     setIsChatbotOpen(true);

@@ -127,34 +127,34 @@
   font-size: 20px;
   cursor: pointer;
   /* 아이콘도 버튼처럼 보이게 하려면 아래 여백 조정 */
-  margin-right: -2px; 
+  margin-right: -2px;
 }
 
 /* 2. 로그아웃 버튼 스타일 */
 .btn.logout {
   /* 박스 형태 잡기 */
-  background-color: #fff;       /* 흰색 배경으로 회색 헤더와 대비 */
-  border: 1px solid #ff6f61;    /* 테마 강조색 테두리 */
-  border-radius: 20px;          /* 둥근 캡슐 모양 */
-  padding: 4px 14px;            /* 안쪽 여백 확보 */
-  margin-left: 5px;             /* 아이콘과의 간격 */
-  
+  background-color: #fff; /* 흰색 배경으로 회색 헤더와 대비 */
+  border: 1px solid #ff6f61; /* 테마 강조색 테두리 */
+  border-radius: 20px; /* 둥근 캡슐 모양 */
+  padding: 4px 14px; /* 안쪽 여백 확보 */
+  margin-left: 5px; /* 아이콘과의 간격 */
+
   /* 텍스트 스타일 */
-  color: #ff6f61;               /* 글자색도 강조색 */
+  color: #ff6f61; /* 글자색도 강조색 */
   font-size: 13px;
-  font-weight: 700;             /* 굵게 */
-  
+  font-weight: 700; /* 굵게 */
+
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* 살짝 그림자 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* 살짝 그림자 */
 }
 
 /* 3. 마우스 올렸을 때 (색상 반전 효과) */
 .btn.logout:hover {
-  background-color: #ff6f61;    /* 배경을 강조색으로 채움 */
-  color: #fff;                  /* 글자를 흰색으로 */
+  background-color: #ff6f61; /* 배경을 강조색으로 채움 */
+  color: #fff; /* 글자를 흰색으로 */
   box-shadow: 0 2px 5px rgba(255, 111, 97, 0.3); /* 그림자 강조 */
-  transform: translateY(-1px);  /* 살짝 떠오르는 느낌 */
+  transform: translateY(-1px); /* 살짝 떠오르는 느낌 */
 }
 
 /* ================= 모바일 ================= */
@@ -185,55 +185,86 @@
     position: relative;
     z-index: 3000;
   }
-
-  /* 모바일 슬라이드 메뉴 */
+}
+/* 모바일 햄버거 메뉴 */
+@media (max-width: 900px) {
   .mobile-slide-menu {
-    display: flex; /* ✅ 필수 */
+    display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     right: 0;
-    width: 250px;
-
-    /* 🔴 핵심 수정 */
-    height: 100dvh;
-
+    width: 100%; /* 전체 화면 */
+    max-width: 280px; /* 폭 제한 */
+    height: 100dvh; /* 화면 전체 */
+    padding: 16px;
     background-color: #fff;
+    backdrop-filter: blur(6px);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
     z-index: 9999;
-
     transform: translateX(100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto; /* 메뉴가 길면 스크롤 */
   }
 
   .mobile-slide-menu.open {
     transform: translateX(0);
   }
 
+  /* 닫기 버튼 */
   .mobile-slide-menu .close-btn {
     align-self: flex-end;
-    background: none;
-    border: none;
-    font-size: 28px;
+    background: #ff6f61;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
     cursor: pointer;
-    margin-bottom: 20px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    margin-bottom: 12px;
+    transition: transform 0.2s ease;
   }
 
+  .mobile-slide-menu .close-btn:hover {
+    transform: scale(1.1);
+  }
+
+  /* 메뉴 리스트 */
   .mobile-slide-menu ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
+  }
+
+  .mobile-slide-menu ul li {
+    flex-shrink: 0;
   }
 
   .mobile-slide-menu ul li a {
-    font-size: 18px;
-    color: #333;
+    display: block;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
     text-decoration: none;
+    color: #333;
+    background-color: #f5f5f5;
+    transition: all 0.2s ease;
   }
 
-  .mobile-slide-menu ul li a:hover {
-    color: #ff6f61;
+  .mobile-slide-menu ul li a:hover,
+  .mobile-slide-menu ul li a.active {
+    background-color: #ff6f61;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transform: translateX(3px);
   }
 }

@@ -7,7 +7,7 @@ import Classroom from "../components/Registration/ClassRoom";
 import Course from "../components/Registration/Course";
 import CollegeTuition from "../components/Registration/CollegeTuition";
 import "./AcademicRegister.css";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "../components/Registration/AdminDashboard";
 const AcademicRegistration = () => {
   const [activeTab, setActiveTab] = useState("college");
 

@@ -1,9 +1,158 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axiosConfig";
 import { useModal } from "../ModalContext";
+import Pagination from "../Layout/Pagination";
+
+/** 🔽 공통 폼 */
+const CourseForm = ({
+  onSubmit,
+  isEdit,
+  form,
+  handleChange,
+  subjects,
+  selectSubjectToEdit,
+}) => (
+  <div className="course-form">
+    {isEdit && (
+      <div className="form-field full">
+        <label>강의 선택</label>
+        <select
+          value={form.id}
+          onChange={(e) =>
+            selectSubjectToEdit(
+              subjects.find((s) => s.id === Number(e.target.value))
+            )
+          }
+        >
+          <option value="">강의 선택</option>
+          {subjects.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.id} - {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    )}
+
+    <div className="form-grid">
+      <div className="form-field">
+        <label>강의명</label>
+        <input name="name" value={form.name} onChange={handleChange} />
+      </div>
+
+      <div className="form-field">
+        <label>교수 ID</label>
+        <input
+          name="professorId"
+          value={form.professorId}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-field">
+        <label>강의실 ID</label>
+        <input name="roomId" value={form.roomId} onChange={handleChange} />
+      </div>
+
+      <div className="form-field">
+        <label>학과 ID</label>
+        <input name="deptId" value={form.deptId} onChange={handleChange} />
+      </div>
+      <div className="form-field">
+        <label>대상 학년</label>
+        <select
+          name="targetGrade"
+          value={form.targetGrade}
+          onChange={handleChange}
+        >
+          <option value="0">공통 (전학년)</option>
+          <option value="1">1학년</option>
+          <option value="2">2학년</option>
+          <option value="3">3학년</option>
+          <option value="4">4학년</option>
+        </select>
+      </div>
+      <div className="form-field">
+        <label>구분</label>
+        <select name="type" value={form.type} onChange={handleChange}>
+          <option value="">선택</option>
+          <option value="전공">전공</option>
+          <option value="교양">교양</option>
+        </select>
+      </div>
+
+      <div className="form-field">
+        <label>연도 / 학기</label>
+        <div className="inline">
+          <input
+            name="subYear"
+            placeholder="연도"
+            value={form.subYear}
+            onChange={handleChange}
+          />
+          <input
+            name="semester"
+            placeholder="학기"
+            value={form.semester}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      <div className="form-field">
+        <label>요일</label>
+        <select name="subDay" value={form.subDay} onChange={handleChange}>
+          <option value="">선택</option>
+          <option value="월">월</option>
+          <option value="화">화</option>
+          <option value="수">수</option>
+          <option value="목">목</option>
+          <option value="금">금</option>
+        </select>
+      </div>
+
+      <div className="form-field">
+        <label>시간</label>
+        <div className="inline">
+          <input
+            name="startTime"
+            placeholder="시작"
+            onChange={handleChange}
+            value={form.startTime}
+            type="number"
+          />
+          <input
+            name="endTime"
+            placeholder="종료"
+            value={form.endTime}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      <div className="form-field">
+        <label>학점</label>
+        <input name="grades" value={form.grades} onChange={handleChange} />
+      </div>
+
+      <div className="form-field">
+        <label>정원</label>
+        <input name="capacity" value={form.capacity} onChange={handleChange} />
+      </div>
+    </div>
+
+    <div className="form-actions">
+      <button className="primary-btn" onClick={onSubmit}>
+        {isEdit ? "수정" : "등록"}
+      </button>
+    </div>
+  </div>
+);
 
 const Course = () => {
   const [subjects, setSubjects] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const { showModal } = useModal();
@@ -22,22 +171,31 @@ const Course = () => {
     endTime: "",
     grades: "",
     capacity: "",
+    targetGrade: 0,
   });
 
   useEffect(() => {
     getSubjects();
-  }, []);
+  }, [page]);
+  // showAddForm이나 showEditForm 상태가 바뀔 때마다 폼을 리셋
+  useEffect(() => {
+    resetForm();
+  }, [showAddForm, showEditForm]);
 
   const getSubjects = async () => {
     try {
-      const res = await api.get("/admin/subject");
-      const data = Array.isArray(res.data) ? res.data : res.data.content;
-      setSubjects(data || []);
+      const res = await api.get("/admin/subject", { params: { page } });
+      if (res.data && res.data.content) {
+        setSubjects(res.data.content); // 목록 세팅
+        setTotalPages(res.data.totalPages); // 전체 페이지 수 세팅
+      } else {
+        setSubjects([]);
+        setTotalPages(0);
+      }
     } catch {
       showModal({ type: "alert", message: "강의 목록 조회 실패" });
     }
   };
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -57,6 +215,7 @@ const Course = () => {
       endTime: "",
       grades: "",
       capacity: "",
+      targetGrade: 0,
     });
   };
 
@@ -88,8 +247,30 @@ const Course = () => {
       type: "confirm",
       message: `${name} 강의를 삭제하시겠습니까?`,
       onConfirm: async () => {
-        await api.delete(`/admin/subject/${id}`);
-        getSubjects();
+        try {
+          // 1. 삭제 요청
+          await api.delete(`/admin/subject/${id}`);
+
+          // 2. 성공 알림
+          showModal({
+            type: "alert",
+            message: "성공적으로 삭제되었습니다.",
+          });
+
+          // 3. 목록 새로고침
+          getSubjects();
+        } catch (err) {
+          // 4. 백엔드(GlobalExceptionHandler)에서 보낸 메시지 추출
+          const serverMessage =
+            err.response?.data?.message ||
+            "삭제 중 알 수 없는 에러가 발생했습니다.";
+
+          // 5. 실패 이유를 사용자에게 알림 (예: "수강생이 3명 존재하여 삭제 불가")
+          showModal({
+            type: "alert",
+            message: serverMessage,
+          });
+        }
       },
     });
   };
@@ -100,161 +281,44 @@ const Course = () => {
     setShowAddForm(false);
   };
 
-  /** 🔽 공통 폼 */
-  const CourseForm = ({ onSubmit, isEdit }) => (
-    <div className="course-form">
-      {isEdit && (
-        <div className="form-field full">
-          <label>강의 선택</label>
-          <select
-            value={form.id}
-            onChange={(e) =>
-              selectSubjectToEdit(
-                subjects.find((s) => s.id === Number(e.target.value))
-              )
-            }
-          >
-            <option value="">강의 선택</option>
-            {subjects.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.id} - {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      <div className="form-grid">
-        <div className="form-field">
-          <label>강의명</label>
-          <input name="name" value={form.name} onChange={handleChange} />
-        </div>
-
-        <div className="form-field">
-          <label>교수 ID</label>
-          <input
-            name="professorId"
-            value={form.professorId}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-field">
-          <label>강의실 ID</label>
-          <input name="roomId" value={form.roomId} onChange={handleChange} />
-        </div>
-
-        <div className="form-field">
-          <label>학과 ID</label>
-          <input name="deptId" value={form.deptId} onChange={handleChange} />
-        </div>
-
-        <div className="form-field">
-          <label>구분</label>
-          <select name="type" value={form.type} onChange={handleChange}>
-            <option value="">선택</option>
-            <option value="전공">전공</option>
-            <option value="교양">교양</option>
-          </select>
-        </div>
-
-        <div className="form-field">
-          <label>연도 / 학기</label>
-          <div className="inline">
-            <input
-              name="subYear"
-              placeholder="연도"
-              value={form.subYear}
-              onChange={handleChange}
-            />
-            <input
-              name="semester"
-              placeholder="학기"
-              value={form.semester}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="form-field">
-          <label>요일</label>
-          <select name="subDay" value={form.subDay} onChange={handleChange}>
-            <option value="">선택</option>
-            <option value="월">월</option>
-            <option value="화">화</option>
-            <option value="수">수</option>
-            <option value="목">목</option>
-            <option value="금">금</option>
-          </select>
-        </div>
-
-        <div className="form-field">
-          <label>시간</label>
-          <div className="inline">
-            <input
-              name="startTime"
-              placeholder="시작"
-              onChange={handleChange}
-              value={form.startTime}
-              type="number"
-            />
-            <input
-              name="endTime"
-              placeholder="종료"
-              value={form.endTime}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="form-field">
-          <label>학점</label>
-          <input name="grades" value={form.grades} onChange={handleChange} />
-        </div>
-
-        <div className="form-field">
-          <label>정원</label>
-          <input
-            name="capacity"
-            value={form.capacity}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-
-      <div className="form-actions">
-        <button className="primary-btn" onClick={onSubmit}>
-          {isEdit ? "수정" : "등록"}
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div>
       <h3>강의 관리</h3>
 
-      <div className="form-actions">
-        <button
-          onClick={() => {
-            setShowAddForm(!showAddForm);
-            setShowEditForm(false);
-          }}
-        >
-          등록
-        </button>
-        <button
-          onClick={() => {
-            setShowEditForm(!showEditForm);
-            setShowAddForm(false);
-          }}
-        >
-          수정
-        </button>
-      </div>
+      <button
+        onClick={() => {
+          setShowAddForm(!showAddForm);
+          setShowEditForm(false);
+        }}
+      >
+        등록
+      </button>
+      <button
+        onClick={() => {
+          setShowEditForm(!showEditForm);
+          setShowAddForm(false);
+        }}
+      >
+        수정
+      </button>
 
-      {showAddForm && <CourseForm onSubmit={handleAdd} />}
-      {showEditForm && <CourseForm onSubmit={handleEdit} isEdit />}
+      {showAddForm && (
+        <CourseForm
+          onSubmit={handleAdd}
+          form={form}
+          handleChange={handleChange}
+        />
+      )}
+      {showEditForm && (
+        <CourseForm
+          onSubmit={handleEdit}
+          isEdit
+          form={form}
+          handleChange={handleChange}
+          subjects={subjects}
+          selectSubjectToEdit={selectSubjectToEdit}
+        />
+      )}
 
       {/* 목록 테이블은 유지 */}
       <div className="table-wrapper">
@@ -266,6 +330,7 @@ const Course = () => {
               <th>교수</th>
               <th>강의실</th>
               <th>학과</th>
+              <th>학년</th>
               <th>구분</th>
               <th>연도</th>
               <th>학기</th>
@@ -284,6 +349,7 @@ const Course = () => {
                 <td>{s.professorId}</td>
                 <td>{s.roomId}</td>
                 <td>{s.deptId}</td>
+                <td>{s.targetGrade === 0 ? "공통" : `${s.targetGrade}학년`}</td>
                 <td>{s.type}</td>
                 <td>{s.subYear}</td>
                 <td>{s.semester}</td>
@@ -303,6 +369,7 @@ const Course = () => {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
 };

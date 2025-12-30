@@ -41,10 +41,9 @@ const CollegeTuition = () => {
       setForm({ collegeId: "", amount: "" });
       getColleges();
     } catch (err) {
-      console.log(err);
       showModal({
         type: "alert",
-        message: "등록금 등록에 실패했습니다.",
+        message: "등록금 등록에 실패했습니다." || err.response?.data?.message,
       });
     }
   };
@@ -64,10 +63,9 @@ const CollegeTuition = () => {
       setShowEditForm(false);
       getColleges();
     } catch (err) {
-      console.log(err);
       showModal({
         type: "alert",
-        message: "수정에 실패하였습니다.",
+        message: "수정에 실패하였습니다." || err.response?.data?.message,
       });
     }
   };

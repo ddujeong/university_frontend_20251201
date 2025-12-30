@@ -1,6 +1,5 @@
 const GradeBySemester = ({ data }) => {
   const list = data?.gradeList ?? [];
-  console.log(list);
   if (!list.length) {
     return <div className="empty-row">이번 학기 성적이 없습니다.</div>;
   }

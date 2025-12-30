@@ -11,7 +11,6 @@ const TuitionNotice = ({ user }) => {
       try {
         const res = await api.get("/tuition/payment");
         setTuitionNotice(res.data);
-        console.log(res.data);
       } catch (err) {
         console.error(err);
         if (err.response?.data?.message?.includes("휴학")) {
@@ -22,7 +21,7 @@ const TuitionNotice = ({ user }) => {
         } else {
           setTuitionNotice({
             status: null,
-            error: "등록금 고지서를 불러오는 중 오류가 발생했습니다.",
+            error: err.response?.data?.message,
           });
         }
       } finally {
@@ -116,10 +115,23 @@ const TuitionNotice = ({ user }) => {
           </div>
           <div style={{ marginTop: "20px" }}>
             {tuitionNotice.status ? (
+              // 이미 납부 완료 상태인 경우
               <p style={{ color: "green", fontWeight: "bold" }}>
-                이번 학기 등록금이 납부되었습니다.
+                {/* 실납부액이 0원이라면 문구를 더 구체적으로 표시 가능 */}
+                {tuitionNotice.tuiAmount - tuitionNotice.schAmount === 0
+                  ? "전액 장학 대상자로 등록 처리가 완료되었습니다."
+                  : "이번 학기 등록금이 납부되었습니다."}
               </p>
+            ) : tuitionNotice.tuiAmount - tuitionNotice.schAmount === 0 ? (
+              // 미납 상태인데 금액이 0원인 경우 (수동 등록이 필요한 정책일 때)
+              <button
+                onClick={handleSubmit}
+                style={{ backgroundColor: "#28a745" }}
+              >
+                0원 등록하기
+              </button>
             ) : (
+              // 일반적인 납부 상황
               <button onClick={handleSubmit}>납부</button>
             )}
           </div>
