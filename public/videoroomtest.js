@@ -3,7 +3,7 @@ var server = "https://janus.jsflux.co.kr/janus";
 var janus = null;
 var sfutest = null;
 var opaqueId = "videoroomtest-" + Janus.randomString(12);
-
+var iceServers = null;
 var myroom = 1234; // Demo room
 if (getQueryStringValue("room") !== "")
   myroom = parseInt(getQueryStringValue("room"));
@@ -15,6 +15,7 @@ var myid = null;
 var mystream = null;
 var mypvtid = null;
 var feeds = [];
+var feedStreams = {};
 
 // [통합] 나(Publisher)를 위한 전용 메시지 처리 함수
 function handlePublisherMessage(msg, jsep) {
@@ -273,20 +274,20 @@ $(document).ready(function () {
         alert("WebRTC를 지원하지 않는 브라우저입니다.");
         return;
       }
+      iceServers = [
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+          urls: process.env.REACT_APP_TURN_URL, // 사용자님의 EC2 IP
+          username: process.env.REACT_APP_TURN_USERNAME,
+          credential: process.env.REACT_APP_TURN_PASSWORD,
+        },
+        {
+          urls: process.env.REACT_APP_TURN_URL + "?transport=tcp", // LTE 우회용 TCP
+          username: process.env.REACT_APP_TURN_USERNAME,
+          credential: process.env.REACT_APP_TURN_PASSWORD,
+        },
+      ];
       if (myusername) {
-        var iceServers = [
-          { urls: "stun:stun.l.google.com:19302" },
-          {
-            urls: process.env.REACT_APP_TURN_URL, // 사용자님의 EC2 IP
-            username: process.env.REACT_APP_TURN_USERNAME,
-            credential: process.env.REACT_APP_TURN_PASSWORD,
-          },
-          {
-            urls: process.env.REACT_APP_TURN_URL + "?transport=tcp", // LTE 우회용 TCP
-            username: process.env.REACT_APP_TURN_USERNAME,
-            credential: process.env.REACT_APP_TURN_PASSWORD,
-          },
-        ];
         initJanusSession();
       } else {
         // 수동 접속 UI (이름 입력 등) 처리 로직 필요 시 여기에 구현
@@ -301,6 +302,7 @@ $(document).ready(function () {
 
 // [통합] Janus 세션 생성 및 플러그인 연결 로직
 function initJanusSession() {
+  if (janus) return;
   janus = new Janus({
     server: server,
     iceServers: iceServers,
@@ -325,6 +327,10 @@ function initJanusSession() {
         onlocalstream: handleLocalStream, // 이미 만드신 함수 연결
         oncleanup: cleanupLocalFeed,
       });
+    },
+    error: function (error) {
+      Janus.error(error);
+      Swal.fire("세션 오류", "Janus 세션을 생성할 수 없습니다.", "error");
     },
   });
 }
