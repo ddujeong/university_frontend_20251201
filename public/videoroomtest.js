@@ -407,7 +407,7 @@ function handleLocalStream(stream) {
 function unpublishOwnFeed() {
   $("#unpublish").attr("disabled", true).html("중지 중...");
   sfutest.send({ message: { request: "unpublish" } });
-  sfutest.hangup();
+  isPublishing = false;
 }
 
 function cleanupLocalFeed() {
