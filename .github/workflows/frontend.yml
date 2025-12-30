@@ -2,7 +2,7 @@ name: Deploy Frontend to EC2
 
 on:
   push:
-    branches: ["main3"]  # main3 브랜치에 push될 때 실행
+    branches: ["main3"] # main3 브랜치에 push될 때 실행
 
 jobs:
   deploy:
@@ -16,10 +16,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
+
+      - name: Create .env file
+        run: |
+          echo "REACT_APP_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env
+          echo "REACT_APP_FRONT_BASE_URL=${{ secrets.FRONT_BASE_URL }}" >> .env
+          echo "REACT_APP_TURN_USERNAME=${{ secrets.TURN_USERNAME }}" >> .env
+          echo "REACT_APP_TURN_PASSWORD=${{ secrets.TURN_PASSWORD }}" >> .env
+          echo "REACT_APP_TURN_URL=${{ secrets.TURN_URL }}" >> .env
 
       - name: Build React App
         run: CI=false npm run build
@@ -47,21 +55,21 @@ jobs:
             DEPLOY_TIME=$(date +%s)
             NEW_DIR="/home/ubuntu/deploy-$DEPLOY_TIME"
             mkdir -p $NEW_DIR
-            
+
             # S3에서 새 파일을 새로운 폴더로 다운로드
             aws s3 cp s3://${{ secrets.S3_BUCKET }}/ $NEW_DIR/ --recursive
-            
+
             # 권한 설정 (Caddy가 읽을 수 있게)
             sudo chown -R caddy:caddy $NEW_DIR
             sudo chmod -R 755 $NEW_DIR
-            
+
             # 심볼릭 링크 교체 (무중단 반영의 핵심)
             # 기존 링크(/home/ubuntu/university-frontend)가 새 폴더를 바라보게 함
             sudo ln -sfn $NEW_DIR /home/ubuntu/university-frontend
-            
+
             # Caddy 설정 반영
             sudo systemctl reload caddy
-            
+
             # 이전 배포 폴더 정리 (최근 3개만 남기기)
             ls -dt /home/ubuntu/deploy-* | tail -n +4 | xargs sudo rm -rf
       # 프론트엔드 배포 결과 알림 (디스코드)

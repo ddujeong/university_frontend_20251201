@@ -58,23 +58,28 @@ $(document).ready(function () {
   // Initialize the library (all console debuggers enabled)
   Janus.init({
     debug: "all",
+    dependencies: Janus.useDefaultDependencies(),
     callback: function () {
-      // Make sure the browser supports WebRTC
-      if (!Janus.isWebrtcSupported()) {
-        bootbox.alert("No WebRTC support... ");
-        return;
-      }
-
-      // 🟢 [수정] 자동 접속 로직 시작
-      if (myusername !== "" && myusername !== null) {
-        // 이름 입력 필드에 이름을 표시하고, 입력 영역을 숨깁니다.
-        $("#username").val(myusername).attr("disabled", true);
-        $("#videojoin").hide(); // 로그인/참여 UI 전체 숨김
-        $("#details").hide(); // 설명 영역 숨김
-
+      // 2. 만약 URL 파라미터에 display(이름)가 있다면 자동으로 접속 시작
+      if (myusername !== "") {
+        // [중요] 여기서 사용자가 이미 구축 중인 Coturn 서버 설정을 적용합니다.
+        var iceServers = [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: process.env.REACT_APP_TURN_URL, // 사용자님의 EC2 IP
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_PASSWORD,
+          },
+          {
+            urls: process.env.REACT_APP_TURN_URL + "?transport=tcp", // LTE 우회용 TCP
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_PASSWORD,
+          },
+        ];
         // Create session
         janus = new Janus({
           server: server,
+          iceServers: iceServers,
           success: function () {
             // Attach to VideoRoom plugin
             janus.attach({
@@ -489,6 +494,20 @@ $(document).ready(function () {
             // Create session
             janus = new Janus({
               server: server,
+              iceServers: [
+                // <--- 이 설정을 반드시 추가해야 합니다!
+                { urls: "stun:stun.l.google.com:19302" },
+                {
+                  urls: "turn:54.180.224.186:3478",
+                  username: "myuser",
+                  credential: "mypassword",
+                },
+                {
+                  urls: "turn:54.180.224.186:3478?transport=tcp",
+                  username: "myuser",
+                  credential: "mypassword",
+                },
+              ],
               success: function () {
                 // Attach to VideoRoom plugin
                 janus.attach({
@@ -1151,7 +1170,7 @@ function newRemoteFeed(id, display, audio, video) {
         $("#videoremote" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="remotevideo' +
             remoteFeed.rfindex +
-            '" width="100%" height="100%" autoplay playsinline/>'
+            '" width="100%" height="100%" autoplay playsinline muted="muted"/>'
         );
         // Hide the spinner
         remoteFeed.spinner.stop();
