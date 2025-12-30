@@ -39,6 +39,13 @@
     ></script>
 
     <script src="%PUBLIC_URL%/janus.js"></script>
+    <script>
+      window.env = {
+        REACT_APP_TURN_URL: "%REACT_APP_TURN_URL%",
+        REACT_APP_TURN_USERNAME: "%REACT_APP_TURN_USERNAME%",
+        REACT_APP_TURN_PASSWORD: "%REACT_APP_TURN_PASSWORD%",
+      };
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

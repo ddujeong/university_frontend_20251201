@@ -63,6 +63,10 @@ jobs:
             sudo chown -R caddy:caddy $NEW_DIR
             sudo chmod -R 755 $NEW_DIR
 
+            # 만약 university-frontend가 심볼릭 링크가 아닌 일반 폴더면 삭제
+              if [ ! -L /home/ubuntu/university-frontend ] && [ -d /home/ubuntu/university-frontend ]; then
+                sudo rm -rf /home/ubuntu/university-frontend
+              fi
             # 심볼릭 링크 교체 (무중단 반영의 핵심)
             # 기존 링크(/home/ubuntu/university-frontend)가 새 폴더를 바라보게 함
             sudo ln -sfn $NEW_DIR /home/ubuntu/university-frontend
