@@ -416,7 +416,7 @@ function unpublishOwnFeed() {
 }
 
 function cleanupLocalFeed() {
-  mystream = null;
+  // mystream = null;
   $("#videolocal")
     .empty()
     .html(
