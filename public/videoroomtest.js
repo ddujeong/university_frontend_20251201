@@ -69,17 +69,27 @@ function handlePublisherMessage(msg, jsep) {
       if (msg["publishers"]) {
         var list = msg["publishers"];
         for (var f in list) {
-          if (
-            list[f]["id"] !== myid &&
-            findRemoteFeed(list[f]["id"]) === null
-          ) {
+          var id = list[f]["id"];
+          var remoteFeed = findRemoteFeed(id);
+        if (id !== myid && remoteFeed === null) {
+            // [1] 아예 새로 들어온 사람이면 기존처럼 생성
             newRemoteFeed(
-              list[f]["id"],
+              id,
               list[f]["display"],
               list[f]["audio_codec"],
               list[f]["video_codec"]
             );
-          }
+          } else if (remoteFeed) {
+            // [2] ★모바일 핵심★ 이미 있는 피드인데 신호가 또 왔다? (다시 송출 시작했다는 신호)
+            // 브라우저의 'onunmute' 이벤트가 늦어도 여기서 강제로 아바타 지워버림
+            hidePlaceholder(remoteFeed);
+            
+            // 영상이 일시정지 상태일 수 있으니 강제로 재생 시도
+            var rv = $("#remotevideo" + remoteFeed.rfindex).get(0);
+            if(rv) {
+                rv.play().catch(function(e) {
+                    console.log("Play error (expected):", e);
+                });
         }
       } else if (msg["leaving"] || msg["unpublished"]) {
         // One of the publishers has gone away?
@@ -90,6 +100,8 @@ function handlePublisherMessage(msg, jsep) {
         if (remoteFeed && msg["unpublished"]) {
           // 화면 중지 버튼을 누른 경우 -> 아바타 표시
           showPlaceholder(remoteFeed);
+          var remoteVideo = $("#remotevideo" + remoteFeed.rfindex).get(0);
+        if(remoteVideo) remoteVideo.pause();
         } else if (leaving !== "ok") {
           // 아예 나간 경우 -> 박스 제거
           detachRemoteFeed(leaving);
