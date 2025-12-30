@@ -279,20 +279,24 @@ $(document).ready(function () {
         return;
       }
       const envVars = window.env || {};
+      const turnUrl = envVars.REACT_APP_TURN_URL || "turn:54.180.224.186:3478";
+      const turnUser = envVars.REACT_APP_TURN_USERNAME || "myuser";
+      const turnPass = envVars.REACT_APP_TURN_PASSWORD || "mypassword";
       iceServers = [
         { urls: "stun:stun.l.google.com:19302" },
         {
-          // 2. envVars에서 안전하게 꺼내 쓰기
-          urls: envVars.REACT_APP_TURN_URL || "turn:54.180.224.186:3478",
-username: envVars.REACT_APP_TURN_USERNAME || "myuser",
-credential: envVars.REACT_APP_TURN_PASSWORD || "mypassword",
+          urls: turnUrl,
+          username: turnUser,
+          credential: turnPass,
         },
         {
-          urls: (envVars.REACT_APP_TURN_URL || "") + "?transport=tcp",
-          username: envVars.REACT_APP_TURN_USERNAME || "",
-          credential: envVars.REACT_APP_TURN_PASSWORD || "",
+          // turnUrl이 있을 때만 transport=tcp를 붙여 프로토콜 에러 방지
+          urls: turnUrl ? (turnUrl.includes("?") ? turnUrl : turnUrl + "?transport=tcp") : [],
+          username: turnUser,
+          credential: turnPass,
         },
       ];
+      console.log("최종 적용된 ICE Servers:", iceServers);
       if (myusername) {
         initJanusSession();
       } else {
