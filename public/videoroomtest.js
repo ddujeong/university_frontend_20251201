@@ -341,7 +341,10 @@ function initJanusSession() {
 
 // --- [내 화면(Publisher) 로직] ---
 function publishOwnFeed(useAudio) {
-  if (isPublishing) return; // 이미 송출 중이면 중단
+  if (isPublishing === true) {
+    console.warn("이미 송출 프로세스가 진행 중입니다. 중복 호출을 차단합니다.");
+    return;
+  }
   isPublishing = true;
   var $btn = $("#publish").length > 0 ? $("#publish") : $("#publish_again");
   $btn
@@ -543,10 +546,9 @@ function autoJoinRoom(roomname, username, role) {
       description: "counseling_room",
     },
     success: function (result) {
-      // 방이 새로 만들어진 경우
-      Janus.log("Room created, joining...");
-      sfutest.send({ message: register });
-    },
+  if (isPublishing) return; // 이미 입장 프로세스 중이면 중단
+  sfutest.send({ message: register });
+},
     error: function (error) {
       // 이미 방이 있는 경우(427 에러 등)에도 무조건 Join 시도
       Janus.log("Room might already exist, attempting to join anyway...");
