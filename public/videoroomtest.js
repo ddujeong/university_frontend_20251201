@@ -5,6 +5,8 @@ var sfutest = null;
 var opaqueId = "videoroomtest-" + Janus.randomString(12);
 var iceServers = null;
 var myroom = 1234; // Demo room
+var isPublishing = false;
+
 if (getQueryStringValue("room") !== "")
   myroom = parseInt(getQueryStringValue("room"));
 
@@ -339,6 +341,8 @@ function initJanusSession() {
 
 // --- [내 화면(Publisher) 로직] ---
 function publishOwnFeed(useAudio) {
+  if (isPublishing) return; // 이미 송출 중이면 중단
+  isPublishing = true;
   var $btn = $("#publish").length > 0 ? $("#publish") : $("#publish_again");
   $btn
     .attr("disabled", true) // 버튼 클릭 막기
@@ -353,6 +357,7 @@ function publishOwnFeed(useAudio) {
       sfutest.send({ message: publish, jsep: jsep });
     },
     error: function (error) {
+      isPublishing = false;
       $btn.removeAttr("disabled").css("opacity", "1").html("화면 송출 시작");
       if (useAudio) {
         publishOwnFeed(false);
@@ -521,27 +526,6 @@ function autoJoinRoom(roomname, username, role) {
   // 2. Janus VideoRoom에서는 쌍방향 통신을 위해 모든 사용자가 'publisher'로 접속해야 합니다.
   var ptype = "publisher";
 
-  Janus.log("Attempting to Join Room ID: " + roomNumber + " as " + ptype);
-
-  // 3. 방 번호 표시
-  $("#room-display").removeClass("hide");
-  $("#room").html(roomNumber);
-
-  // 4. 방 생성 시도 (첫 번째 사용자는 방을 생성하고, 두 번째 사용자는 'Room already exists' 에러를 받습니다.)
-  // 이 에러는 Janus에서 정상적인 동작이므로 무시하고 Join을 시도합니다.
-  var createRoom = {
-    request: "create",
-    room: roomNumber,
-    permanent: false,
-    record: false,
-    publishers: 6,
-    bitrate: 128000,
-    fir_freq: 10,
-    ptype: ptype, // Publisher로 일관성 유지
-    description: "counseling_room",
-    is_private: false,
-  };
-
   // 5. 방 참여 (Join) 요청 메시지 생성
   var register = {
     request: "join",
@@ -552,41 +536,21 @@ function autoJoinRoom(roomname, username, role) {
 
   // 먼저 방 생성을 시도합니다.
   sfutest.send({
-    message: createRoom,
+    message: {
+      request: "create",
+      room: roomNumber,
+      publishers: 6,
+      description: "counseling_room",
+    },
     success: function (result) {
-      // 서버에서 응답을 받으면 (성공 또는 'Room already exists'와 같은 플러그인 레벨 오류) 바로 참여 요청을 보냅니다.
-      Janus.log("Room Create Attempt Response Received. Proceeding to Join.");
-
-      myusername = username;
+      // 방이 새로 만들어진 경우
+      Janus.log("Room created, joining...");
       sfutest.send({ message: register });
-
-      Janus.log(
-        "Room Join Attempt Sent: " +
-          username +
-          " to room " +
-          roomNumber +
-          " as " +
-          ptype
-      );
     },
     error: function (error) {
-      // Janus 서버와의 통신 자체에 실패한 경우, 안전하게 Join을 시도합니다.
-      Janus.warn(
-        "Room Create API Call Failed. Attempting to Join directly. Error:",
-        error
-      );
-
-      myusername = username;
+      // 이미 방이 있는 경우(427 에러 등)에도 무조건 Join 시도
+      Janus.log("Room might already exist, attempting to join anyway...");
       sfutest.send({ message: register });
-
-      Janus.log(
-        "Room Join Attempt Sent (After Create Failure): " +
-          username +
-          " to room " +
-          roomNumber +
-          " as " +
-          ptype
-      );
     },
   });
 }
@@ -597,5 +561,3 @@ $(window).on("beforeunload", function () {
     janus.destroy();
   }
 });
-
-// 추가로, 'unpublish' 시에도 확실히 hangup 처리를 해줍니다.
