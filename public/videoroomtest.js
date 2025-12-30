@@ -274,17 +274,19 @@ $(document).ready(function () {
         alert("WebRTC를 지원하지 않는 브라우저입니다.");
         return;
       }
+      const envVars = window.env || {};
       iceServers = [
         { urls: "stun:stun.l.google.com:19302" },
         {
-          urls: window.env.REACT_APP_TURN_URL, // 사용자님의 EC2 IP
-          username: window.env.REACT_APP_TURN_USERNAME,
-          credential: window.env.REACT_APP_TURN_PASSWORD,
+          // 2. envVars에서 안전하게 꺼내 쓰기
+          urls: envVars.REACT_APP_TURN_URL || "",
+          username: envVars.REACT_APP_TURN_USERNAME || "",
+          credential: envVars.REACT_APP_TURN_PASSWORD || "",
         },
         {
-          urls: window.env.REACT_APP_TURN_URL + "?transport=tcp", // LTE 우회용 TCP
-          username: window.env.REACT_APP_TURN_USERNAME,
-          credential: window.env.REACT_APP_TURN_PASSWORD,
+          urls: (envVars.REACT_APP_TURN_URL || "") + "?transport=tcp",
+          username: envVars.REACT_APP_TURN_USERNAME || "",
+          credential: envVars.REACT_APP_TURN_PASSWORD || "",
         },
       ];
       if (myusername) {
