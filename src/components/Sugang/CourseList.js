@@ -12,13 +12,13 @@ const CourseListPage = () => {
   const [searchParams, setSearchParams] = useState({
     type: "",
     name: "",
-    deptId: "",
+
     targetGrade: "",
   });
   const [appliedFilters, setAppliedFilters] = useState({
     type: "",
     name: "",
-    deptId: "",
+
     targetGrade: "",
   });
   const [selectedCourseId, setSelectedCourseId] = useState(null);
@@ -51,7 +51,7 @@ const CourseListPage = () => {
         page,
         type: appliedFilters.type,
         name: appliedFilters.name,
-        deptId: appliedFilters.deptId,
+
         targetGrade: appliedFilters.targetGrade,
       });
       setSubjects(res.data.content || []);
@@ -94,20 +94,6 @@ const CourseListPage = () => {
           <option value="전공">전공</option>
           <option value="교양">교양</option>
         </select>
-
-        <select
-          name="deptId"
-          value={searchParams.deptId}
-          onChange={handleInputChange}
-        >
-          <option value="">전체</option>
-          {departments.map((dept) => (
-            <option key={dept.id} value={dept.id}>
-              {dept.name}
-            </option>
-          ))}
-        </select>
-
         <input
           name="name"
           value={searchParams.name}

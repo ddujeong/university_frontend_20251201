@@ -125,7 +125,7 @@
 .logout-icon {
   color: #ff6f61;
   font-size: 20px;
-  cursor: pointer;
+  /* cursor: pointer; */
   /* 아이콘도 버튼처럼 보이게 하려면 아래 여백 조정 */
   margin-right: -2px;
 }

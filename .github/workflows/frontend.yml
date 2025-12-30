@@ -1,0 +1,88 @@
+name: Deploy Frontend to EC2
+
+on:
+  push:
+    branches: ["main3"] # main3 브랜치에 push될 때 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Create .env file
+        run: |
+          echo "REACT_APP_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env
+          echo "REACT_APP_FRONT_BASE_URL=${{ secrets.FRONT_BASE_URL }}" >> .env
+          echo "REACT_APP_TURN_USERNAME=${{ secrets.TURN_USERNAME }}" >> .env
+          echo "REACT_APP_TURN_PASSWORD=${{ secrets.TURN_PASSWORD }}" >> .env
+          echo "REACT_APP_TURN_URL=${{ secrets.TURN_URL }}" >> .env
+
+      - name: Build React App
+        run: CI=false npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 1. 빌드된 결과물을 S3에 먼저 업로드 (백업 및 전달용)
+      - name: Upload to S3
+        run: aws s3 sync ./build s3://${{ secrets.S3_BUCKET }} --delete
+
+      # 2. EC2에 접속하여 배포 프로세스 진행
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 새 배포 디렉토리 생성 (타임스탬프 기반)
+            DEPLOY_TIME=$(date +%s)
+            NEW_DIR="/home/ubuntu/deploy-$DEPLOY_TIME"
+            mkdir -p $NEW_DIR
+
+            # S3에서 새 파일을 새로운 폴더로 다운로드
+            aws s3 cp s3://${{ secrets.S3_BUCKET }}/ $NEW_DIR/ --recursive
+
+            # 권한 설정 (Caddy가 읽을 수 있게)
+            sudo chown -R caddy:caddy $NEW_DIR
+            sudo chmod -R 755 $NEW_DIR
+
+            # 심볼릭 링크 교체 (무중단 반영의 핵심)
+            # 기존 링크(/home/ubuntu/university-frontend)가 새 폴더를 바라보게 함
+            sudo ln -sfn $NEW_DIR /home/ubuntu/university-frontend
+
+            # Caddy 설정 반영
+            sudo systemctl reload caddy
+
+            # 이전 배포 폴더 정리 (최근 3개만 남기기)
+            ls -dt /home/ubuntu/deploy-* | tail -n +4 | xargs sudo rm -rf
+      # 프론트엔드 배포 결과 알림 (디스코드)
+      - name: Send Discord Notification
+        if: always() # 성공/실패 상관없이 알림
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          title: "💻 프론트엔드 배포 결과"
+          description: |
+            **저장소:** ${{ github.repository }}
+            **브랜치:** ${{ github.ref_name }}
+            **결과:** ${{ job.status == 'success' && '✅ 배포 완료' || '❌ 배포 실패' }}
+            **사이트:** https://54.180.224.186.nip.io
+          color: ${{ job.status == 'success' && '0x3498db' || '0xff0000' }}

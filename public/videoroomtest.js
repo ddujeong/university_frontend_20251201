@@ -267,12 +267,26 @@ function cleanupRemoteFeed(remoteFeed) {
 $(document).ready(function () {
   Janus.init({
     debug: "all",
+    dependencies: Janus.useDefaultDependencies(),
     callback: function () {
       if (!Janus.isWebrtcSupported()) {
         alert("WebRTC를 지원하지 않는 브라우저입니다.");
         return;
       }
       if (myusername) {
+        var iceServers = [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: process.env.REACT_APP_TURN_URL, // 사용자님의 EC2 IP
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_PASSWORD,
+          },
+          {
+            urls: process.env.REACT_APP_TURN_URL + "?transport=tcp", // LTE 우회용 TCP
+            username: process.env.REACT_APP_TURN_USERNAME,
+            credential: process.env.REACT_APP_TURN_PASSWORD,
+          },
+        ];
         initJanusSession();
       } else {
         // 수동 접속 UI (이름 입력 등) 처리 로직 필요 시 여기에 구현
@@ -289,6 +303,7 @@ $(document).ready(function () {
 function initJanusSession() {
   janus = new Janus({
     server: server,
+    iceServers: iceServers,
     success: function () {
       janus.attach({
         plugin: "janus.plugin.videoroom",

@@ -10,6 +10,7 @@
 .section-layout {
   display: flex;
   gap: 24px;
+  min-height: 700px;
 }
 
 /* ===== Sidebar ===== */
