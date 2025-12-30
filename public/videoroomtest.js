@@ -406,8 +406,13 @@ function handleLocalStream(stream) {
 
 function unpublishOwnFeed() {
   $("#unpublish").attr("disabled", true).html("중지 중...");
-  sfutest.send({ message: { request: "unpublish" } });
+ var config = { request: "configure", video: false };
+  sfutest.send({ message: config });
+  
   isPublishing = false;
+  
+  // UI를 버튼이 있는 대기 화면으로 교체 (원래 쓰시던 함수 호출)
+  cleanupLocalFeed();
 }
 
 function cleanupLocalFeed() {
@@ -424,10 +429,26 @@ function cleanupLocalFeed() {
   $("#publish_again")
     .off("click")
     .click(function () {
-      publishOwnFeed(true);
+      publishAgainFromStop();
     });
 }
+function publishAgainFromStop() {
+  // [수정] 비디오 송출을 다시 ON
+  var config = { request: "configure", video: true };
+  sfutest.send({ message: config });
 
+  isPublishing = true;
+
+  // [중요] 내 화면에 다시 비디오 태그를 그려줘야 합니다 (handleLocalStream 재사용)
+  // 기존에 가지고 있던 mystream을 다시 연결하거나 새로 stream을 잡습니다.
+  // 여기서는 간단하게 다시 handleLocalStream 스타일로 UI를 복구하는 로직이 필요합니다.
+  if(mystream) {
+      handleLocalStream(mystream);
+  } else {
+      // 스트림이 날아갔다면 다시 잡아야 함
+      publishOwnFeed(true); 
+  }
+}
 function toggleMute() {
   var isMuted = sfutest.isAudioMuted();
   var requestAudio = isMuted; // 음소거 상태(true)였으면 audio: true로 요청
@@ -537,7 +558,7 @@ function autoJoinRoom(roomname, username, role) {
 
   // 2. Janus VideoRoom에서는 쌍방향 통신을 위해 모든 사용자가 'publisher'로 접속해야 합니다.
   var ptype = "publisher";
-
+  $("#room").html(roomNumber);
   // 5. 방 참여 (Join) 요청 메시지 생성
   var register = {
     request: "join",
