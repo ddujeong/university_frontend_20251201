@@ -16,40 +16,39 @@ var myrole = getQueryStringValue("role"); // role은 이제 UI에서만 사용�
 var myid = null;
 var mystream = null;
 var mypvtid = null;
-var feeds = [];
+var feeds = {};
 var feedStreams = {};
 
 // [통합] 나(Publisher)를 위한 전용 메시지 처리 함수
 function handlePublisherMessage(msg, jsep) {
   Janus.debug(" ::: Got a message (publisher) :::", msg);
   var event = msg["videoroom"];
-  Janus.debug("Event: " + event);
-  if (event) {
-    if (event === "joined") {
+  // JSEP(SDP 협상)만 온 경우 처리
+  if (jsep) {
+    sfutest.handleRemoteJsep({ jsep: jsep });
+  }
+  if (!event) return;
+
+  switch (event) {
+    case "joined":
       // 입장 성공 로직
       myid = msg["id"];
       mypvtid = msg["private_id"];
       $("#videojoin").hide(); // 참여 UI 숨김
       $("#videos").removeClass("hide").show();
-      setTimeout(function() {
-    publishOwnFeed(true);
-  }, 500);
+      setTimeout(function () {
+        publishOwnFeed(true);
+      }, 500);
 
       if (msg["publishers"]) {
-        var list = msg["publishers"];
-        for (var f in list) {
-          var id = list[f]["id"];
-          if (id && id !== myid && findRemoteFeed(id) === null) {
-            newRemoteFeed(
-              id,
-              list[f]["display"],
-              list[f]["audio_codec"],
-              list[f]["video_codec"]
-            );
+        msg["publishers"].forEach((p) => {
+          if (!findRemoteFeed(p.id)) {
+            newRemoteFeed(p.id, p.display, p.audio_codec, p.video_codec);
           }
-        }
+        });
       }
-    } else if (event === "destroyed") {
+      break;
+    case "destroyed":
       // 방 폭파 로직
       Swal.fire({
         icon: "warning",
@@ -57,142 +56,91 @@ function handlePublisherMessage(msg, jsep) {
         text: "방장이 회의를 종료했거나 방이 사라졌습니다. 메인 화면으로 돌아갑니다.",
         background: "#1e293b",
         color: "#fff",
-        confirmButtonColor: "#3b82f6",
         confirmButtonText: "확인",
-        allowOutsideClick: false, // 실수로 바깥 눌러서 창 닫히는 것 방지
-      }).then((result) => {
+      }).then(() => {
         // 사용자가 '확인' 버튼을 누르면 실행됩니다.
         window.location.reload();
       });
-    } else if (event === "event") {
+      break;
+    case "event":
       // 이벤트 로직(새 사람 등장/나감 처리)
       if (msg["publishers"]) {
-        var list = msg["publishers"];
-        for (var f in list) {
-          var id = list[f]["id"];
-          var remoteFeed = findRemoteFeed(id);
-        if (id !== myid && remoteFeed === null) {
-            // [1] 아예 새로 들어온 사람이면 기존처럼 생성
-            newRemoteFeed(
-              id,
-              list[f]["display"],
-              list[f]["audio_codec"],
-              list[f]["video_codec"]
-            );
-          } else if (remoteFeed) {
-            // [2] ★모바일 핵심★ 이미 있는 피드인데 신호가 또 왔다? (다시 송출 시작했다는 신호)
-            // 브라우저의 'onunmute' 이벤트가 늦어도 여기서 강제로 아바타 지워버림
+        msg["publishers"].forEach((p) => {
+          var remoteFeed = findRemoteFeed(p.id);
+          if (!remoteFeed) {
+            // 아예 처음 보는 사람이면 구독 시작
+            newRemoteFeed(p.id, p.display, p.audio_codec, p.video_codec);
+          } else {
             hidePlaceholder(remoteFeed);
-            
-            // 영상이 일시정지 상태일 수 있으니 강제로 재생 시도
             var rv = $("#remotevideo" + remoteFeed.rfindex).get(0);
-            if(rv) {
-                rv.play().catch(function(e) {
-                    console.log("Play error (expected):", e);
-                });
-        }
-      } else if (msg["leaving"] || msg["unpublished"]) {
-        // One of the publishers has gone away?
-        var leaving = msg["leaving"] || msg["unpublished"];
-        Janus.log("Publisher left: " + leaving);
-
-        var remoteFeed = findRemoteFeed(leaving);
-        if (remoteFeed && msg["unpublished"]) {
-          // 화면 중지 버튼을 누른 경우 -> 아바타 표시
-          showPlaceholder(remoteFeed);
-          var remoteVideo = $("#remotevideo" + remoteFeed.rfindex).get(0);
-        if(remoteVideo) remoteVideo.pause();
-        } else if (leaving !== "ok") {
-          // 아예 나간 경우 -> 박스 제거
-          detachRemoteFeed(leaving);
-        }
-      } else if (msg["error"]) {
-        if (
-          msg["error_code"] === 429 &&
-          msg["error"] === "Missing mandatory element (feed)"
-        ) {
-          Janus.warn("Ignoring common subscriber error: " + msg["error"]);
-          return;
-        }
-        if (
-          msg["error"] === "Can't unpublish, not published" ||
-          msg["error"] === "No such feed" ||
-          msg["error"].includes("not found")
-        ) {
-          Janus.log(
-            "의도적인 중단 과정의 에러이므로 무시합니다: " + msg["error"]
-          );
-          return; // 여기서 함수를 끝내서 아래 Swal.fire가 실행되지 않게 합니다.
-        }
-        let errorText = msg["error"];
-
-        // 알 수 없는 에러 문구 번역 (선택 사항)
-        if (errorText.includes("already exist"))
-          errorText = "이미 사용 중인 이름이거나 방 번호입니다.";
-
-        Swal.fire({
-          icon: "error",
-          title: "서버 응답 오류",
-          text: errorText,
-          background: "#1e293b",
-          color: "#fff",
-          confirmButtonColor: "#ef4444", // 에러 강조를 위해 빨간색
-          confirmButtonText: "확인",
+            if (rv)
+              rv.play().catch((e) => console.log("Play error (expected):", e));
+          }
         });
       }
-    }
+      if (msg["leaving"] || msg["unpublished"]) {
+        // One of the publishers has gone away?
+        var leavingId = msg["leaving"] || msg["unpublished"];
+        var remoteFeed = findRemoteFeed(leavingId);
+        Janus.log("Publisher left: " + leavingId);
+
+        if (remoteFeed) {
+          if (msg["unpublished"]) {
+            showPlaceholder(remoteFeed);
+          } else {
+            detachRemoteFeed(leavingId);
+          }
+        }
+      }
+      if (msg["error"]) {
+        handleJanusError(msg);
+      }
+      break;
+    default:
+      Janus.debug(" ::: Unknown event received from VideoRoom :::", event, msg);
+      break;
   }
-  if (jsep) {
-    Janus.debug("Handling SDP as well...", jsep);
-    sfutest.handleRemoteJsep({ jsep: jsep });
-    var audio = msg["audio_codec"];
-    var video = msg["video_codec"];
-    if (mystream && mystream.getAudioTracks().length > 0 && !audio) {
-      toastr.warning("오디오 스트림이 거절되었습니다.");
-    }
-    if (mystream && mystream.getVideoTracks().length > 0 && !video) {
-      toastr.warning("비디오 스트림이 거절되었습니다.");
-      $("#myvideo").hide();
-      $("#videolocal").append(
-        '<div class="no-video-container">Video rejected</div>'
-      );
-    }
-  }
+}
+
+function handleJanusError(msg) {
+  const ignoreErrors = ["No such feed", "not found", "not published"];
+  if (ignoreErrors.some((err) => msg["error"].includes(err))) return;
+
+  let errorText = msg["error"];
+  if (errorText.includes("already exist"))
+    errorText = "이미 사용 중인 정보입니다.";
+
+  Swal.fire({
+    icon: "error",
+    title: "서버 응답 오류",
+    text: errorText,
+    background: "#1e293b",
+    color: "#fff",
+  });
 }
 // 🟢 [추가] 상대방이 방을 나갔을 때 피드를 정리하는 통합 함수
 function detachRemoteFeed(leavingId) {
-  var remoteFeed = null;
-  // 1. 해당 ID를 가진 피드 찾기
-  for (var i = 1; i < 6; i++) {
-    if (feeds[i] && feeds[i].rfid == leavingId) {
-      remoteFeed = feeds[i];
-      break;
-    }
-  }
+  var remoteFeed = feeds[leavingId];
 
-  // 2. 피드가 존재하면 UI 정리 및 연결 해제
-  if (remoteFeed != null) {
-    Janus.debug(
-      "Feed " +
-        remoteFeed.rfid +
-        " (" +
-        remoteFeed.rfdisplay +
-        ") has left, detaching"
-    );
+  if (remoteFeed) {
+    Janus.debug("Detaching feed " + leavingId);
 
-    // UI 요소 비우고 숨기기
+    // 1. UI 정리
     $("#remote" + remoteFeed.rfindex)
       .empty()
       .hide();
     $("#videoremote" + remoteFeed.rfindex).empty();
+    $("#videoremote" + remoteFeed.rfindex)
+      .closest(".video-box")
+      .removeClass("show-up");
 
-    // 데이터 정리
-    feeds[remoteFeed.rfindex] = null;
+    // 2. Janus 플러그인 해제 및 콜백 제거 (메모리 누수 방지)
     remoteFeed.detach();
 
-    // 스트림 관리 객체에서 삭제
-    if (feedStreams && feedStreams[remoteFeed.rfid]) {
-      delete feedStreams[remoteFeed.rfid];
+    // 3. 데이터 객체에서 삭제
+    delete feeds[leavingId];
+    if (feedStreams[leavingId]) {
+      delete feedStreams[leavingId];
     }
   }
 }
@@ -268,15 +216,16 @@ function cleanupRemoteFeed(remoteFeed) {
   Janus.log(
     " ::: Got a cleanup notification (remote feed " + remoteFeed.rfid + ") :::"
   );
-  if (remoteFeed.spinner) remoteFeed.spinner.stop();
   $("#remotevideo" + remoteFeed.rfindex).remove();
   $("#remote" + remoteFeed.rfindex)
     .empty()
     .hide();
   $("#videoremote" + remoteFeed.rfindex).empty();
-
-  if (remoteFeed.rfindex !== null && remoteFeed.rfindex !== undefined) {
-    feeds[remoteFeed.rfindex] = null;
+  $("#videoremote" + remoteFeed.rfindex)
+    .closest(".video-box")
+    .removeClass("show-up");
+  if (remoteFeed.rfid && feeds[remoteFeed.rfid]) {
+    delete feeds[remoteFeed.rfid];
   }
 }
 // --- [초기화 파트] ---
@@ -303,7 +252,11 @@ $(document).ready(function () {
         },
         {
           // turnUrl이 있을 때만 transport=tcp를 붙여 프로토콜 에러 방지
-          urls: turnUrl ? (turnUrl.includes("?") ? turnUrl : turnUrl + "?transport=tcp") : [],
+          urls: turnUrl
+            ? turnUrl.includes("?")
+              ? turnUrl
+              : turnUrl + "?transport=tcp"
+            : [],
           username: turnUser,
           credential: turnPass,
         },
@@ -388,8 +341,8 @@ function publishOwnFeed(useAudio) {
         Swal.fire({
           icon: "error",
           title: "송출 오류",
-         text: "에러 내용: " + (error.message || JSON.stringify(error)),
-    footer: "카메라 권한이나 TURN 서버 설정을 확인해주세요."
+          text: "에러 내용: " + (error.message || JSON.stringify(error)),
+          footer: "카메라 권한이나 TURN 서버 설정을 확인해주세요.",
         });
       }
     },
@@ -418,11 +371,11 @@ function handleLocalStream(stream) {
 
 function unpublishOwnFeed() {
   $("#unpublish").attr("disabled", true).html("중지 중...");
- var config = { request: "configure", video: false };
+  var config = { request: "configure", video: false };
   sfutest.send({ message: config });
-  
+
   isPublishing = false;
-  
+
   // UI를 버튼이 있는 대기 화면으로 교체 (원래 쓰시던 함수 호출)
   cleanupLocalFeed();
 }
@@ -445,20 +398,18 @@ function cleanupLocalFeed() {
     });
 }
 function publishAgainFromStop() {
-  // [수정] 비디오 송출을 다시 ON
-  var config = { request: "configure", video: true };
-  sfutest.send({ message: config });
-
   isPublishing = true;
 
-  // [중요] 내 화면에 다시 비디오 태그를 그려줘야 합니다 (handleLocalStream 재사용)
-  // 기존에 가지고 있던 mystream을 다시 연결하거나 새로 stream을 잡습니다.
-  // 여기서는 간단하게 다시 handleLocalStream 스타일로 UI를 복구하는 로직이 필요합니다.
-  if(mystream) {
-      handleLocalStream(mystream);
+  // [수정] 단순히 설정만 바꾸는 게 아니라, 스트림 상태를 체크해서 대응합니다.
+  if (mystream && mystream.getVideoTracks().length > 0) {
+    // 트랙이 살아있다면 설정만 변경
+    var config = { request: "configure", video: true };
+    sfutest.send({ message: config });
+    handleLocalStream(mystream); // UI 복구
   } else {
-      // 스트림이 날아갔다면 다시 잡아야 함
-      publishOwnFeed(true); 
+    // 트랙이 죽었거나 스트림이 없다면 새로 Offer 생성 (확실한 방법)
+    isPublishing = false; // publishOwnFeed 내부에서 중복 방지 로직이 있으므로 초기화 후 호출
+    publishOwnFeed(true);
   }
 }
 function toggleMute() {
@@ -487,13 +438,17 @@ function newRemoteFeed(id, display, audio, video) {
       remoteFeed.rfid = id;
       remoteFeed.rfdisplay = display;
       // 빈칸 찾아 저장?
-      for (var i = 1; i < 6; i++) {
-        if (!feeds[i]) {
-          feeds[i] = remoteFeed;
-          remoteFeed.rfindex = i;
+      var usedIndexes = Object.values(feeds).map((f) => f.rfindex);
+      var slotIndex = 1;
+      for (var i = 1; i <= 6; i++) {
+        if (!usedIndexes.includes(i)) {
+          slotIndex = i;
           break;
         }
       }
+      remoteFeed.rfindex = slotIndex;
+      feeds[id] = remoteFeed;
+
       remoteFeed.send({
         message: {
           request: "join",
@@ -539,12 +494,7 @@ function getQueryStringValue(name) {
 
 // 🟢 [추가] 이미 구독 중인 피드인지 확인하는 헬퍼 함수
 function findRemoteFeed(id) {
-  for (var i = 1; i < 6; i++) {
-    if (feeds[i] && feeds[i].rfid == id) {
-      return feeds[i];
-    }
-  }
-  return null;
+  return feeds[id] ? feeds[id] : null;
 }
 
 function autoJoinRoom(roomname, username, role) {
@@ -588,13 +538,17 @@ function autoJoinRoom(roomname, username, role) {
       description: "counseling_room",
     },
     success: function (result) {
-  if (isPublishing) return; // 이미 입장 프로세스 중이면 중단
-  sfutest.send({ message: register });
-},
-    error: function (error) {
-      // 이미 방이 있는 경우(427 에러 등)에도 무조건 Join 시도
-      Janus.log("Room might already exist, attempting to join anyway...");
+      if (isPublishing) return; // 이미 입장 프로세스 중이면 중단
       sfutest.send({ message: register });
+    },
+    error: function (error) {
+      // 427 에러는 '이미 방이 존재함'을 의미하므로 정상 진행
+      if (error.error_code === 427) {
+        sfutest.send({ message: register });
+      } else {
+        Janus.error("방 생성 중 진짜 에러 발생:", error);
+        // 여기서만 사용자에게 알림
+      }
     },
   });
 }
